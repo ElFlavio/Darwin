@@ -9,7 +9,7 @@ httpServer = http.createServer(function(req, res) {
 	// execute select query in couch db
 	db.select().limit(1).exec(function(err, res){
 		console.log(err);
-		console.log(res);
+		console.log(res.value);
 	});
 	
 	// display result in browser
