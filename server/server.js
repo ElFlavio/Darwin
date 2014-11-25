@@ -1,17 +1,19 @@
-var http = require('http');
-var CouchDB = require('couch-db').CouchDB;
-    server = new CouchDB('http://localhost:5984'); // instance de couch-db
+var express = require('express');
+var app = express();
 
-// demare le server et ecoute sur la racine
-httpServer = http.createServer(function(req, res) {
-	res.writeHead(200, {'Content-Type': 'text/plain'});;
-	var db = server.database('user');
-	// execute select query in couch db
-	db.select().limit(1).exec(function(err, res){
-		console.log(err);
-		console.log(res.value);
-	});
-	
-	// display result in browser
-	res.end('hello World');
-}).listen(8080);// port d'ecoute
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+app.get('/get', function (req, res) {
+  res.sendfile('index.html'); // load html
+});
+
+var server = app.listen(3000, function () {
+
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+
+});
