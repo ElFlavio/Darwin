@@ -1,17 +1,15 @@
-var http = require('http');
-var CouchDB = require('couch-db').CouchDB;
-    server = new CouchDB('http://localhost:5984'); // instance de couch-db
+var express = require('express');
+var app = express();
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
 
-// demare le server et ecoute sur la racine
-httpServer = http.createServer(function(req, res) {
-	res.writeHead(200, {'Content-Type': 'text/plain'});;
-	var db = server.database('user');
-	// execute select query in couch db
-	db.select().limit(1).exec(function(err, res){
-		console.log(err);
-		console.log(res);
-	});
-	
-	// display result in browser
-	res.end('hello World');
-}).listen(8080);// port d'ecoute
+app.use(express.static(__dirname + '/public'));
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({'extended':'true'}));
+app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(methodOverride());
+
+app.listen(3000);
+console.log("App listening on port 3000");
