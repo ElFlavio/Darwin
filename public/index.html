@@ -12,21 +12,23 @@
 	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	    <![endif]-->
     	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+    	<script src="lib/pouchdb-3.1.0.min.js"></script>
     	<script src="core.js"></script>
 	</head>
 	<body ng-controller="mainController">
 		<div class="container">
-		
+		{{ errors }}
 			<div class="jumbotron text-center">
 	            <h1>Number of Users <span class="label label-info">{{ users.length }}</span></h1>
 	        </div>
+	        
 	        
 	        <div id="todo-list" class="row">
 	            <div class="col-sm-4 col-sm-offset-4">
 	
 	                <div ng-repeat="user in users">
 	                    <label>
-	                        {{ user.name }}, {{ user.firstname }}
+	                        <a ng-href="/api/user/{{ user.id }}">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
 	                    </label>
 	                </div>
 	
