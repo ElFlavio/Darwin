@@ -7,6 +7,7 @@ var converter = require("csvtojson").core.Converter;
 var fs = require("fs");
 var couchdb = require('couch-db')('http://localhost:5984');
 var PouchDB = require('pouchdb');
+var multer = require('multer');
 
 // API CONFIG
 app.use(express.static(__dirname + '/public'));
@@ -14,19 +15,20 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({'extended':'true'}));
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
+app.use(multer());
 
 // Connect to db
-var db = couchdb.database('test');
+var db = couchdb.database('student');
 
 // API ROUTE
 app.get('/api/users', function(req, res) {
 	res.json('ok');
 });
 
-app.post('/api/user', function(req, res) {
-	//user[req.body.id]['msg'].push(req.body.comment);
-	var csvFileName = "./2014-11-21-09-58-08--tags-clos +interview_skill_at-(now-365d TO now+365d) -tags-admis -tags-refuse +sort-interview_skill_at -tags-ne.csv";
+app.post('/api/user', function(req, res, next) {
+	var csvFileName = req.files.csv.path;
 	var fileStream = fs.createReadStream(csvFileName);
 	
 	var param = {
@@ -57,7 +59,7 @@ app.post('/api/user', function(req, res) {
      			console.log(body);
 				});
 			}
-			res.json(user);
+			res.redirect('/');
 	});
 	fileStream.pipe(csvConverter);
 });

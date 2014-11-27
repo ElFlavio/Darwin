@@ -5,9 +5,16 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
 	{
     $scope.formData = {};
     $scope.f_user = {};
-    $scope.add = false;
+    /*$scope.add = false;
     $scope.user = false;
     $scope.list = false;
+    */
+    $scope.page = "list";
+    $scope.csv = {};
+    $scope.exercices = [];
+    
+    for(i = 1; i <= 12; i++)
+    	$scope.exercices.push("Exercice" + i);
     // when landing on the page, get all todos and show them
     $http.get('/api/users')
         .success(function(data) {
@@ -20,7 +27,7 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
 									res = err.message;
 									return (false);
 								}
-							$scope.list = true;
+							//$scope.list = true;
 							$scope.users = response.rows;
 						});
 					});
@@ -28,7 +35,12 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
         .error(function(data) {
             console.warn('Error: ' + data);
         });
-
+		
+		$scope.gotopage = function(page)
+		{
+			$scope.page = page;
+		};
+		
     // when submitting the add form, send the text to the node API
     $scope.createUser = function() {
         $http.post('/api/user', $scope.formData)
@@ -46,7 +58,6 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
             });
     };
     
-    // delete a todo after checking it
     $scope.getUser = function(id) {
     	pouchdb.get(id, function(err, res) {
     		$rootScope.$apply(function() {
@@ -56,9 +67,10 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
     				return (false);
     			}
     			$scope.user_info = res;
-    			console.log(res);
-    			$scope.list = false;
-    			$scope.user = true;
+    			$scope.page = 'user';
+    			//console.log(res);
+    			//$scope.list = false;
+    			//$scope.user = true;
     		});
     	});
     };
@@ -90,6 +102,21 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
 			  $scope.user_info.comments = otherDoc.comments;
 			  $scope.f_user.comment = '';
 			});
+  	};
+  	
+  	$scope.validateEx = function(ex, $event)
+  	{
+  		$($event.currentTarget).parent().removeClass("alert-info alert-danger").addClass("alert-success");
+  	};
+  	
+  	$scope.reinitEx = function(ex, $event)
+  	{
+  		$($event.currentTarget).parent().removeClass("alert-success alert-danger").addClass("alert-info");
+  	};
+  	
+  	$scope.refuseEx = function(ex, $event)
+  	{
+  		$($event.currentTarget).parent().removeClass("alert-info alert-success").addClass("alert-danger");
   	};
   }
 ]);

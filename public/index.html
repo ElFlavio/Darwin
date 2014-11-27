@@ -1,36 +1,157 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="darwin">
-	<head>
-		<title>Exemple</title>
-		<!-- Bootstrap -->
-	    <link href="/css/bootstrap.min.css" rel="stylesheet">
+<html lang="fr" ng-app="darwin">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Darwin</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/css/starter-template.css" rel="stylesheet">
+  </head>
+
+  <body ng-controller="mainController">
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#" ng-click="gotopage(home)">DARWIN - HardWin</a>
+          <ul class="nav navbar-nav">
+            <li><a href="#" ng-click="gotopage(home)"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+        <div class="pull-right">
+        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
+        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
+        </div>
+      </div>
+    </div>
+	{{ errors }}
+	<div ng-switch="page">
+	    <div id ="calendar" class="container" ng-switch-when="calendar">
+	      <div class="starter-template">
+	        <h1>Calendrier</h1>
+	        <p class="lead"></p>
+	      </div>
+	    </div><!-- container -->
+	    
+	    <div id="todo-list" class="row" ng-switch-when="list">
+		    <div class="col-sm-4 col-sm-offset-4">
+		        <div ng-repeat="user in users">
+		            <label>
+		                <a href="#" ng-click="getUser(user.id)">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
+		            </label>
+		        </div>
+		    </div>
+		</div>
 	
-	    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	    <!--[if lt IE 9]>
-	      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-	    <![endif]-->
-    	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
-    	<script src="lib/pouchdb-3.1.0.min.js"></script>
-    	<script src="core.js"></script>
-	</head>
-	<body ng-controller="mainController">
-		<div class="container">
-		{{ errors }}
+	    <div id="profile" class="container" ng-switch-when="user">
+	    	{{ update_message }}
+	        <div classe="row" align="center">
+	          <h1>Profil</h1>
+	        </div>
+	        <div class="row">
+	          <div class="col-sm-4" align="center">
+	            <h2>Informations</h2>
+	            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
+	            <button type="button" class="btn btn-default">Prendre une photo</button>
+	            <h4>{{ user_info.civ }}.{{ user_info.lastname }} {{ user_info.firstname}}</h4>
+	            <h5>ID : {{ user_info._id}} </h5>
+	            <p>{{ user_info.birthdate }}</p>
+	            <p>{{ user_info.cursus }}</p>
+	            <a href="mailto:{{ user_info.emai}}">{{ user_info.mail}}</a>
+	          </div> <!-- col-sm-4 -->
+	          <div class="col-sm-8" align="center">
+	            <h2>Évaluation</h2>
+	            <div class="row">
+	              <div class="col-sm-4" align="center">
+	                <div class="alert alert-info" role="alert" ng-repeat="exercice in exercices">
+	                	<button ng-click="validateEx(this,$event)" type="button" class="btn btn-default btn-xs pull-left">
+	                		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+	            		</button>
+	            		<span ng-click="reinitEx(this,$event)">{{ exercice }}</span>
+	            		<button ng-click="refuseEx(exercice, $event)" type="button" class="btn btn-default btn-xs pull-right">
+	            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+	        			</button>
+	    			</div>
+	              </div> <!-- col-sm-2 -->
+	              <div class="col-sm-8" align="center">
+	                <div class="input-group center-block">
+	                	<form ng-submit="addComment(user_info._rev, user_info._id)">
+		                  <div class="input-group">
+		                    <input type="text" class="form-control" value="{{ f_user.comment }}" placeholder="Message" ng-model="f_user.comment" />
+		                    <span class="input-group-btn ">
+		                      	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+		                    </span>
+	                  	</div><!-- /input-group -->
+	                  </form>
+	                  <li ng-repeat="comment in user_info.comments.slice().reverse()">
+	             		<p>
+	             			{{ comment.comment }}<br />
+	             			<small>{{ comment.date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
+	         			</p>
+		             </li>
+	                </div> <!-- col-sm-6 -->
+	              </div> <!-- row -->
+	            </div> <!-- input-group center-block -->
+	          </div> <!-- col-sm-4 -->
+	        </div> <!-- row info + eval -->
+	        <div classe="row" align="center">
+	          <h2>Commentaire final</h2>
+	          <div class="input-group center-block">
+	            <div class="input-group">
+	              <input type="text" class="form-control" placeholder="Message">
+	              <span class="input-group-btn">
+	                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+	              </span>
+	            </div><!-- /input-group -->
+	          </div> <!-- input-group center-block -->
+	        </div>
+	    </div><!-- profile -->
+   </div>
+
+	<div class="modal hide fade" id="myModal">
+	  	<div class="modal-header">
+	    	<a class="close" data-dismiss="modal">×</a>
+	    	<h3>Modal header</h3>
+	  	</div>
+	  	<div class="modal-body">
+	    	<p>One fine body…</p>
+	  	</div>
+	  	<div class="modal-footer">
+	    	<a href="#" class="btn">Close</a>
+	    	<a href="#" class="btn btn-primary">Save changes</a>
+		</div>
+	</div>
+ 	<a class="btn" data-toggle="modal" href="#myModal" >Launch Modal</a>
+
+    <div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
+
+    <script type="text/javascript" src="static/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.js"> </script>
+    <script src="http://code.angularjs.org/1.2.27/angular.js"></script>
+    <script src="static/bower_components/angular-animate/angular-animate.min.js"></script>
+	<script src="static/js/pouchdb-3.1.0.min.js"></script>
+	<script src="static/js/core.js"></script>
+    <script type="text/javascript">
+	    $(document).load(function(){
+	        $('#myModal').modal('show');
+	    });
+    </script>
+  </body>
+</html>
+<!--    	
 			<div class="jumbotron text-center">
 	            <h1>Number of Users <span class="label label-info">{{ users.length }}</span></h1>
 	        </div>
 	        
-	        <div id="todo-list" class="row" ng-show="list">
-	            <div class="col-sm-4 col-sm-offset-4">
-	                <div ng-repeat="user in users">
-	                    <label>
-	                        <a href="#" ng-click="getUser(user.id)">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
-	                    </label>
-	                </div>
-	            </div>
-			</div>
 			
 			<div id="todo-form" class="row" ng-show="add">
 	            <div class="col-sm-8 col-sm-offset-2 text-center">
@@ -45,17 +166,12 @@
 	            </div>
 	        </div>
 	        
-	        <div id="todo-list" class="row" ng-show="user">
-	        	{{ update_message }}
 	            <div class="col-sm-4 col-sm-offset-4">
-	            	<p>
-	            		{{ user_info.civ }}, {{ user_info.firstname}} {{ user_info.lastname }}<br />
-	            		{{ user_info.birthdate }} <br />
-	            		{{ user_info.cursus }}
-	            	</p>
+	            	<form method="post" enctype="multipart/form-data" action="/api/user">
+	            		<input type="file" name="csv" />
+	                    <button type="submit" class="btn btn-primary btn-lg">Upload</button>
+	                </form>
 	            </div>
-	            <input type="text" class="form-control input-lg text-center" value="{{ f_user.comment }}" placeholder="Add user comments" ng-model="f_user.comment" /><br />
-	            <button type="submit" class="btn btn-primary btn-lg" ng-click="addComment(user_info._rev, user_info._id)">Add</button>
 	             <li class="col-sm-4 col-sm-offset-4" ng-repeat="comment in user_info.comments.slice().reverse()">
              		<p>
              			{{ comment.comment }}<br />
@@ -68,3 +184,4 @@
     	<script src="/js/bootstrap.min.js"></script>        
 	</body>
 </html>
+-->
