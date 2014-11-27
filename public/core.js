@@ -11,7 +11,7 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
     // when landing on the page, get all todos and show them
     $http.get('/api/users')
         .success(function(data) {
-        	//PouchDB.sync('http://localhost:5984/test/', 'student'); // works but in local
+        	PouchDB.sync('http://62.210.85.76:5984/student/', 'student'); // works but in local
         	//pouchdb.sync('http://localhost:5984/mydb', {live: true}); // todo activate cors
  					pouchdb.allDocs({include_docs: true}, function(err, response){
  						$rootScope.$apply(function() {
