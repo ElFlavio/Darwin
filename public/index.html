@@ -22,25 +22,22 @@
 	            <h1>Number of Users <span class="label label-info">{{ users.length }}</span></h1>
 	        </div>
 	        
-	        
-	        <div id="todo-list" class="row">
+	        <div id="todo-list" class="row" ng-show="list">
 	            <div class="col-sm-4 col-sm-offset-4">
-	
 	                <div ng-repeat="user in users">
 	                    <label>
-	                        <a ng-href="/api/user/{{ user.id }}">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
+	                        <a href="#" ng-click="getUser(user.id)">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
 	                    </label>
 	                </div>
-	
 	            </div>
 			</div>
 			
-			<div id="todo-form" class="row">
+			<div id="todo-form" class="row" ng-show="add">
 	            <div class="col-sm-8 col-sm-offset-2 text-center">
 	                <form>
 	                    <div class="form-group">
 	                        <input type="text" ng-model="formData.id" value="1" />
-	                        <input type="text" class="form-control input-lg text-center" placeholder="Add user comments" ng-model="formData.comment">
+	                        <input type="text" class="form-control input-lg text-center" placeholder="Add user comments" ng-model="formData.comment" />
 	                    </div>
 	
 	                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createUser()">Add</button>
@@ -48,8 +45,26 @@
 	            </div>
 	        </div>
 	        
+	        <div id="todo-list" class="row" ng-show="user">
+	        	{{ update_message }}
+	            <div class="col-sm-4 col-sm-offset-4">
+	            	<p>
+	            		{{ user_info.civ }}, {{ user_info.firstname}} {{ user_info.lastname }}<br />
+	            		{{ user_info.birthdate }} <br />
+	            		{{ user_info.cursus }}
+	            	</p>
+	            </div>
+	            <input type="text" class="form-control input-lg text-center" value="{{ f_user.comment }}" placeholder="Add user comments" ng-model="f_user.comment" /><br />
+	            <button type="submit" class="btn btn-primary btn-lg" ng-click="addComment(user_info._rev, user_info._id)">Add</button>
+	             <li class="col-sm-4 col-sm-offset-4" ng-repeat="comment in user_info.comments.slice().reverse()">
+             		<p>
+             			{{ comment.comment }}<br />
+             			<small>{{ comment.date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
+         			</p>
+	             </li>
+			</div>
+	        
         </div>
-        <!-- Include all compiled plugins (below), or include individual files as needed -->
     	<script src="/js/bootstrap.min.js"></script>        
 	</body>
 </html>
