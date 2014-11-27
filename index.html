@@ -11,7 +11,7 @@
     <title>Darwin</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="dist/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="starter-template.css" rel="stylesheet">
@@ -24,7 +24,7 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="#">DARWIN - HardWin</a>
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
           </ul>
         </div><!--/.nav-collapse -->
         <div class="pull-right">
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="container">
+    <div id ="calendar" class="container">
       <div class="starter-template">
         <h1>Calendrier</h1>
         <p class="lead"></p>
@@ -42,35 +42,66 @@
     </div><!-- /.container -->
 
     <div id="profile" class="container">
-        <div class="starter-template">
-          <h1>Profile</h1>
-          <h2>Informations</h2>
-          <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
-          <button type="button" class="btn btn-default">Prendre une photo</button>
-          <h4>M.NOM Prénom</h4>
-          <h5>ID : XXXXXX </h5>
-          <a href="mailto:prenom.nom@gmail.com">prenom.nom@gmail.com</a>
+        <div classe="row" align="center">
+          <h1>Profil</h1>
+        </div>
+        <div class="row">
+          <div class="col-sm-4" align="center">
+            <h2>Informations</h2>
+            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
+            <button type="button" class="btn btn-default">Prendre une photo</button>
+            <h4>M.NOM Prénom</h4>
+            <h5>ID : XXXXXX </h5>
+            <a href="mailto:prenom.nom@gmail.com">prenom.nom@gmail.com</a>
+          </div> <!-- col-sm-4 -->
 
-          <h2>Évaluation</h2>
-          <div class="input-group">
-<!--             <button class="input-group-addon glyphicon glyphicon-send"></button>
-            <input type="text" class="form-control" placeholder="Message">
-            <input type="text" class="form-control"> -->
 
+          <div class="col-sm-8" align="center">
+            <h2>Évaluation</h2>
+            <div class="row">
+              <div class="col-sm-4" align="center">
+                <div class="alert alert-success" role="alert"><input type="radio" name="exo1"> Exercice 1 <input type="radio" name="exo1"></div>
+                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 2 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+                <div class="alert alert-danger" role="alert">Exercice 3</div>
+                <div class="alert alert-info" role="alert">Exercice 4</div>
+                <div class="alert alert-info" role="alert">Exercice 5</div>
+                <div class="alert alert-info" role="alert">Exercice 6</div>
+                <div class="alert alert-info" role="alert">Exercice 7</div>
+                <div class="alert alert-info" role="alert">Exercice 8</div>
+                <div class="alert alert-info" role="alert">Exercice 9</div>
+                <div class="alert alert-info" role="alert">Exercice 10</div>
+                <div class="alert alert-info" role="alert">Exercice 11</div>
+                <div class="alert alert-info" role="alert">Exercice 12</div>
+              </div> <!-- col-sm-2 -->
+              <div class="col-sm-8" align="center">
+                <div class="input-group center-block">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Message">
+                    <span class="input-group-btn ">
+                      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+                    </span>
+                  </div><!-- /input-group -->
+                </div> <!-- col-sm-6 -->
+              </div> <!-- row -->
+            </div> <!-- input-group center-block -->
+          </div> <!-- col-sm-4 -->
+
+
+        </div> <!-- row info + eval -->
+        <div classe="row" align="center">
+          <h2>Commentaire final</h2>
+          <div class="input-group center-block">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Message">
               <span class="input-group-btn">
                 <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
               </span>
             </div><!-- /input-group -->
-          </div>
-          <h2>Commentaire finale</h2>
+          </div> <!-- input-group center-block -->
+
         </div>
-
-
-
-
     </div>
+    <div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
 
   </body>
 </html>
