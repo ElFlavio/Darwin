@@ -39,7 +39,7 @@
         <h1>Calendrier</h1>
         <p class="lead"></p>
       </div>
-    </div><!-- /.container -->
+    </div><!-- container -->
 
     <div id="profile" class="container">
         <div classe="row" align="center">
@@ -85,9 +85,8 @@
               </div> <!-- row -->
             </div> <!-- input-group center-block -->
           </div> <!-- col-sm-4 -->
-
-
         </div> <!-- row info + eval -->
+
         <div classe="row" align="center">
           <h2>Commentaire final</h2>
           <div class="input-group center-block">
@@ -99,9 +98,35 @@
             </div><!-- /input-group -->
           </div> <!-- input-group center-block -->
 
+
+
         </div>
-    </div>
+    </div><!-- profile -->
+
+<div class="modal hide fade" id="myModal">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>One fine body…</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn">Close</a>
+    <a href="#" class="btn btn-primary">Save changes</a>
+  </div>
+</div>
+ <a class="btn" data-toggle="modal" href="#myModal" >Launch Modal</a>
+
+<h1>test</h1>
     <div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
 
+    <script type="text/javascript" src="dist/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="dist/js/bootstrap.js"> </script>
+    <script type="text/javascript">
+    $(document).load(function(){
+        $('#myModal').modal('show');
+    });
+    </script>
   </body>
 </html>
