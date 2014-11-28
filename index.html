@@ -1,133 +1,170 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+ 	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link rel="icon" href="../../favicon.ico">
 
-    <title>Darwin</title>
+	    <title>Darwin</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="dist/css/bootstrap.css" rel="stylesheet">
+	    <!-- Bootstrap core CSS -->
+	    <link href="dist/css/bootstrap.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
-  </head>
+	    <!-- Custom styles for this template -->
+	    <link href="starter-template.css" rel="stylesheet">
+	</head>
 
-  <body>
+ 	<body>
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a class="navbar-brand" href="#">DARWIN - HardWin</a>
+		      <ul class="nav navbar-nav">
+		        <li><a href="#"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+		      </ul>
+		    </div><!--/.nav-collapse -->
+		    <div class="pull-right">
+		    <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
+		    <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
+		    </div>
+		  </div>
+		</div>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">DARWIN - HardWin</a>
-          <ul class="nav navbar-nav">
-            <li><a href="#"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-        <div class="pull-right">
-        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
-        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
-        </div>
-      </div>
-    </div>
-	<div>
-	    <div id ="calendar" class="container">
-	      <div class="starter-template">
-	        <h1>Calendrier</h1>
-	        <p class="lead"></p>
-	      </div>
-	    </div><!-- container -->
-	
-	    <div id="profile" class="container">
-	        <div classe="row" align="center">
-	          <h1>Profil</h1>
-	        </div>
-	        <div class="row">
-	          <div class="col-sm-4" align="center">
-	            <h2>Informations</h2>
-	            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
-	            <button type="button" class="btn btn-default">Prendre une photo</button>
-	            <h4>M.NOM Prénom</h4>
-	            <h5>ID : XXXXXX </h5>
-	            <a href="mailto:prenom.nom@gmail.com">prenom.nom@gmail.com</a>
-	          </div> <!-- col-sm-4 -->
-	
-	
-	          <div class="col-sm-8" align="center">
-	            <h2>Évaluation</h2>
-	            <div class="row">
-	              <div class="col-sm-4" align="center">
-	                <div class="alert alert-success" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 1 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 2 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-danger" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 3 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 4 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 5 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 6 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 7 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 8 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 9 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 10 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 11 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	                <div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 12 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
-	              </div> <!-- col-sm-2 -->
-	              <div class="col-sm-8" align="center">
-	                <div class="input-group center-block">
-	                  <div class="input-group">
-	                    <input type="text" class="form-control" placeholder="Message">
-	                    <span class="input-group-btn ">
-	                      <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
-	                    </span>
-	                  </div><!-- /input-group -->
-	                </div> <!-- col-sm-6 -->
-	              </div> <!-- row -->
-	            </div> <!-- input-group center-block -->
-	          </div> <!-- col-sm-4 -->
-	        </div> <!-- row info + eval -->
-	
-	        <div classe="row" align="center">
-	          <h2>Commentaire final</h2>
-	          <div class="input-group center-block">
-	            <div class="input-group">
-	              <input type="text" class="form-control" placeholder="Message">
-	              <span class="input-group-btn">
-	                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
-	              </span>
-	            </div><!-- /input-group -->
-	          </div> <!-- input-group center-block -->
-	
-	
-	
-	        </div>
-	    </div><!-- profile -->
-    </div>
+		<div>
+		    <div id ="calendar" class="container">
+				<div class="starter-template">
+					<h1>Calendrier</h1>
+					<p class="lead"></p>
+				</div>
+		    </div><!-- container -->
 
-<div class="modal hide fade" id="myModal">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Modal header</h3>
-  </div>
-  <div class="modal-body">
-    <p>One fine body…</p>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn">Close</a>
-    <a href="#" class="btn btn-primary">Save changes</a>
-  </div>
-</div>
- <a class="btn" data-toggle="modal" href="#myModal" >Launch Modal</a>
+		    <div id="profile" class="container">
+				<div classe="row" align="center">
+					<h1>Profil</h1>
+				</div>
+		        <div class="row">
+					<div class="col-sm-4" align="center">
+						<h2>Informations</h2>
+						<img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
+						<button type="button" class="btn btn-default">Prendre une photo</button>
+						<h4>M.NOM Prénom</h4>
+						<h5>ID : XXXXXX </h5>
+						<a href="mailto:prenom.nom@gmail.com">prenom.nom@gmail.com</a>
+					</div> <!-- col-sm-4 informations -->
 
-<h1>test</h1>
-    <div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
+					<div class="col-sm-8" align="center">
+						<h2>Évaluation</h2>
+						<div class="row">
+							<div class="col-sm-4" align="center">
+								<div class="alert alert-success" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 1 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 2 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-danger" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 3 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 4 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 5 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 6 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 7 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 8 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 9 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 10 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 11 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+								<div class="alert alert-info" role="alert"><button type="button" class="btn btn-default btn-xs pull-left"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> </button> Exercice 12 <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> </button></div>
+							</div> <!-- col-sm-4 -->
 
-    <script type="text/javascript" src="dist/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="dist/js/bootstrap.js"> </script>
-    <script type="text/javascript">
-    $(document).load(function(){
-        $('#myModal').modal('show');
-    });
-    </script>
-  </body>
+							<div class="col-sm-8" align="center">
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Message">
+									<span class="input-group-btn ">
+									<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+									</span>
+								</div><!-- /input-group -->
+							</div> <!-- col-sm-8 -->
+						</div> <!-- row -->
+					</div> <!-- col-sm-4 evaluation-->
+		        </div> <!-- row info + eval -->
+
+		        <div classe="row" align="center">
+		          <h2>Commentaire final</h2>
+		          <div class="input-group center-block">
+		            <div class="input-group">
+		              <input type="text" class="form-control" placeholder="Message">
+		              <span class="input-group-btn">
+		                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+		              </span>
+		            </div><!-- /input-group -->
+		          </div> <!-- input-group center-block -->
+		        </div> <!-- row commentaire final-->
+		    </div><!-- profile -->
+		</div>
+
+		<div class="modal fade" id="login">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" align="center">Identification</h4>
+					</div>
+					<div class="modal-body form-group">
+					 	<input type="text" class="form-control log" placeholder="Identifiant">
+						<input type="password" class="form-control log" placeholder="Mot de passe">
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Connexion</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal login -->
+
+		<div class="modal fade" id="adduser">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" align="center">Ajouter un utilisateur</h4>
+					</div>
+					<div class="modal-body form-group">
+					 	<input type="text" class="form-control log" placeholder="Identifiant">
+						<input type="password" class="form-control log" placeholder="Mot de passe">
+						<select name="selectList" class="form-control log">
+						<option value="1">Évaluateur</option> 
+						<option value="1">Administrateur</option> 
+						</select> 
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Valider</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal adduser-->
+
+		<div class="modal fade" id="import_csv">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" align="center">Importation du CSV</h4>
+					</div>
+					<div class="modal-body form-group" align="center">
+						<p>Aucun CSV détecté pour cette journée, veuillez en importer un.</p>
+						<button class="btn btn-default"><span class="glyphicon glyphicon-import" aria-hidden="true"></span></button>
+						<span class="glyphicon glyphicon-saved" aria-hidden="true"></span>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal import_csv -->
+
+		<div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
+
+		<script type="text/javascript" src="dist/js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="dist/js/bootstrap.js"> </script>
+		<script type="text/javascript">
+		    $(window).load(function(){
+		        $('#import_csv').modal('show');
+		        // backdrop: 'static'
+		    });
+		</script>
+
+  	</body>
+
 </html>
