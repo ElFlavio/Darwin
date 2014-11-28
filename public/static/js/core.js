@@ -1,25 +1,20 @@
 // public/core.js
 var darwin = angular.module('darwin', []);
 
-darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', function($scope, $http, $rootScope, pouchdb)
+darwin.controller('mainController',
+	['$scope', '$http', '$rootScope', 'pouchdb',
+	function($scope, $http, $rootScope, pouchdb)
 	{
     $scope.formData = {};
     $scope.f_user = {};
-    /*$scope.add = false;
-    $scope.user = false;
-    $scope.list = false;
-    */
     $scope.page = "list";
     $scope.csv = {};
-    $scope.exercices = [];
+    $scope.user_id = 0;
     
-    for(i = 1; i <= 12; i++)
-    	$scope.exercices.push("Exercice" + i);
     // when landing on the page, get all todos and show them
     $http.get('/api/users')
         .success(function(data) {
-        	PouchDB.sync('http://62.210.85.76:5984/student/', 'student'); // works but in local
-        	//pouchdb.sync('http://localhost:5984/mydb', {live: true}); // todo activate cors
+        	pouchdb.sync('http://localhost:5984/student'); // todo activate cors
  					pouchdb.allDocs({include_docs: true}, function(err, response){
  						$rootScope.$apply(function() {
 							if (err)
@@ -27,7 +22,6 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
 									res = err.message;
 									return (false);
 								}
-							//$scope.list = true;
 							$scope.users = response.rows;
 						});
 					});
@@ -51,7 +45,6 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
 		 						});
                 $scope.formData = {}; // clear the form so our user is ready to enter another
                 $scope.users[data.id] = data.comment;
-                //console.log(data);
             })
             .error(function(data) {
                 console.warn('Error: ' + data);
@@ -59,6 +52,7 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
     };
     
     $scope.getUser = function(id) {
+    	$scope.user_id = id;
     	pouchdb.get(id, function(err, res) {
     		$rootScope.$apply(function() {
     			if (err)
@@ -68,9 +62,6 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
     			}
     			$scope.user_info = res;
     			$scope.page = 'user';
-    			//console.log(res);
-    			//$scope.list = false;
-    			//$scope.user = true;
     		});
     	});
     };
@@ -79,15 +70,15 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
     {
     	pouchdb.get(id, function(err, otherDoc) {
     		var date = Date.now();
-    		var new_comment = {comment: $scope.f_user.comment, date: date};
-    		otherDoc.comments.push(new_comment);
+    		otherDoc.comments[date] = $scope.f_user.comment;
 			  pouchdb.put({
 			  	birthdate: otherDoc.birthdate,
 			  	civ: otherDoc.civ,
 			  	cursus: otherDoc.cursus,
 			  	firstname: otherDoc.firstname,
 			  	lastname: otherDoc.lastname,
-			    comments: otherDoc.comments
+			    comments: otherDoc.comments,
+			    ex: otherDoc.ex
 			  }, id, otherDoc._rev, function(err, response) {
 			  	$rootScope.$apply(function() {
 				  	if (err)
@@ -107,16 +98,82 @@ darwin.controller('mainController',['$scope', '$http', '$rootScope', 'pouchdb', 
   	$scope.validateEx = function(ex, $event)
   	{
   		$($event.currentTarget).parent().removeClass("alert-info alert-danger").addClass("alert-success");
-  	};
-  	
+  		pouchdb.get($scope.user_id, function(err, otherDoc) {
+  			otherDoc.ex[ex] = true;
+			  pouchdb.put({
+			    birthdate: otherDoc.birthdate,
+			  	civ: otherDoc.civ,
+			  	cursus: otherDoc.cursus,
+			  	firstname: otherDoc.firstname,
+			  	lastname: otherDoc.lastname,
+			    comments: otherDoc.comments,
+			    ex: otherDoc.ex
+			  }, $scope.user_id, otherDoc._rev, function(err, response) {
+			  	$rootScope.$apply(function() {
+				  	if (err)
+				  		{
+				  			console.log(err);
+				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
+				  			return (false);
+				  		}
+				  	console.log(response);
+			  	});
+			  });
+			});
+		};
+		  	
   	$scope.reinitEx = function(ex, $event)
   	{
   		$($event.currentTarget).parent().removeClass("alert-success alert-danger").addClass("alert-info");
+  		pouchdb.get($scope.user_id, function(err, otherDoc) {
+  			otherDoc.ex[ex] = null;
+			  pouchdb.put({
+			    birthdate: otherDoc.birthdate,
+			  	civ: otherDoc.civ,
+			  	cursus: otherDoc.cursus,
+			  	firstname: otherDoc.firstname,
+			  	lastname: otherDoc.lastname,
+			    comments: otherDoc.comments,
+			    ex: otherDoc.ex
+			  }, $scope.user_id, otherDoc._rev, function(err, response) {
+			  	$rootScope.$apply(function() {
+				  	if (err)
+				  		{
+				  			console.log(err);
+				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
+				  			return (false);
+				  		}
+				  	console.log(response);
+			  	});
+			  });
+			});
   	};
   	
   	$scope.refuseEx = function(ex, $event)
   	{
   		$($event.currentTarget).parent().removeClass("alert-info alert-success").addClass("alert-danger");
+  		pouchdb.get($scope.user_id, function(err, otherDoc) {
+  			otherDoc.ex[ex] = false;
+			  pouchdb.put({
+			    birthdate: otherDoc.birthdate,
+			  	civ: otherDoc.civ,
+			  	cursus: otherDoc.cursus,
+			  	firstname: otherDoc.firstname,
+			  	lastname: otherDoc.lastname,
+			    comments: otherDoc.comments,
+			    ex: otherDoc.ex
+			  }, $scope.user_id, otherDoc._rev, function(err, response) {
+			  	$rootScope.$apply(function() {
+				  	if (err)
+				  		{
+				  			console.log(err);
+				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
+				  			return (false);
+				  		}
+				  	console.log(response);
+			  	});
+			  });
+			});
   	};
   }
 ]);
@@ -125,4 +182,3 @@ darwin.factory('pouchdb', function() {
   PouchDB.enableAllDbs = true;
   return new PouchDB('student');
 });
-

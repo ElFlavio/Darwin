@@ -34,6 +34,10 @@
       </div>
     </div>
 	{{ errors }}
+	<form method="post" enctype="multipart/form-data" action="/api/user">
+		<input type="file" name="csv" />
+        <button type="submit" class="btn btn-primary btn-lg">Upload</button>
+    </form>
 	<div ng-switch="page">
 	    <div id ="calendar" class="container" ng-switch-when="calendar">
 	      <div class="starter-template">
@@ -72,11 +76,11 @@
 	            <h2>Évaluation</h2>
 	            <div class="row">
 	              <div class="col-sm-4" align="center">
-	                <div class="alert alert-info" role="alert" ng-repeat="exercice in exercices">
-	                	<button ng-click="validateEx(this,$event)" type="button" class="btn btn-default btn-xs pull-left">
+	                <div class="alert alert-info" role="alert" ng-repeat="exercice in user_info.ex">
+	                	<button ng-click="validateEx($index + 1, $event)" type="button" class="btn btn-default btn-xs pull-left">
 	                		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 	            		</button>
-	            		<span ng-click="reinitEx(this,$event)">{{ exercice }}</span>
+	            		<span ng-click="reinitEx($index + 1, $event)">exercice {{ $index + 1 }}</span>
 	            		<button ng-click="refuseEx(exercice, $event)" type="button" class="btn btn-default btn-xs pull-right">
 	            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 	        			</button>
@@ -92,10 +96,10 @@
 		                    </span>
 	                  	</div><!-- /input-group -->
 	                  </form>
-	                  <li ng-repeat="comment in user_info.comments.slice().reverse()">
+	                  <li ng-repeat="(date, comment) in user_info.comments">
 	             		<p>
-	             			{{ comment.comment }}<br />
-	             			<small>{{ comment.date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
+	             			{{ comment }}<br />
+	             			<small>{{ date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
 	         			</p>
 		             </li>
 	                </div> <!-- col-sm-6 -->

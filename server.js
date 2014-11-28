@@ -30,6 +30,7 @@ app.get('/api/users', function(req, res) {
 app.post('/api/user', function(req, res, next) {
 	var csvFileName = req.files.csv.path;
 	var fileStream = fs.createReadStream(csvFileName);
+	var db = new PouchDB('http://localhost:5984/student');
 	
 	var param = {
 	    delimiter: ';'
@@ -39,24 +40,16 @@ app.post('/api/user', function(req, res, next) {
 		for (user in users)
 			{
 				u = users[user];
-				user = {
-					_id: u.id.toString(),
+				db.put({
 					civ: u.civility,
 					firstname: u.firstname,
 					lastname: u.lastname,
 					birthdate: u.birthdate,
-					comments: [{0: u.comment_tech}],
-					cursus: u.learnings_level + ' - ' + u.learnings_expertise
-				};
-				// not tested like that var db = couchdb.database('test'); // connecte to db
-				db.insert(user, function(err, body) {
-					if (err)
-						{
-							console.log('insertion failed ', err.reason);
-							//res.json(err.message);
-							return;
-     				}
-     			console.log(body);
+					comments: {0: u.comment_tech},
+					cursus: u.learnings_level + ' - ' + u.learnings_expertise,
+					ex: {1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
+				}, u.id.toString()).then(function(response) {
+					console.log(response);
 				});
 			}
 			res.redirect('/');
