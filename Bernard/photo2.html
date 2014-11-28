@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebcamJS Test Page</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div>
+<video id="video" width="100" height="100" autoplay></video>
+<canvas id="canvas" width="100" height="100"></canvas>
+</div>
+<div>
+	<a href="photo.html" class="ext">Prendre une photo</a>
+</div>
+	<div id="hopla"></div>
+<script>
+$(document).ready(function() {
+  $(".ext").on('click',function() {
+    var url = $(this).prop('href');
+    $("#hopla").load(url);
+  });
+});
+</script>
+</body>
+</html>
