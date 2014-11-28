@@ -12,180 +12,220 @@
 
     <!-- Bootstrap core CSS -->
     <link href="static/css/bootstrap.css" rel="stylesheet">
+    <style rel="stylesheet">
+    	[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+			display: none !important;
+		}
+		.loader {position: absolute; top: 50%; left: 50%; z-index: -1; margin: -16px 0 0 -16px;}
+		.content_loaded { background: #FFF;}
+    </style>
 
     <!-- Custom styles for this template -->
     <link href="static/css/starter-template.css" rel="stylesheet">
+    <link href="static/css/responsive-calendar.css" rel="stylesheet" media="screen">
   </head>
 
   <body ng-controller="mainController">
-
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#" ng-click="gotopage(home)">DARWIN - HardWin</a>
-          <ul class="nav navbar-nav">
-            <li><a href="#" ng-click="gotopage(home)"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-        <div class="pull-right">
-        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
-        <button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
-        </div>
-      </div>
-    </div>
-	{{ errors }}
-	<form method="post" enctype="multipart/form-data" action="/api/user">
-		<input type="file" name="csv" />
-        <button type="submit" class="btn btn-primary btn-lg">Upload</button>
-    </form>
-	<div ng-switch="page">
-	    <div id ="calendar" class="container" ng-switch-when="calendar">
-	      <div class="starter-template">
-	        <h1>Calendrier</h1>
-	        <p class="lead"></p>
-	      </div>
-	    </div><!-- container -->
-	    
-	    <div id="todo-list" class="row" ng-switch-when="list">
-		    <div class="col-sm-4 col-sm-offset-4">
-		        <div ng-repeat="user in users">
-		            <label>
-		                <a href="#" ng-click="getUser(user.id)">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
-		            </label>
-		        </div>
+  	<div class="content_loaded" ng-cloak>
+	    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <a class="navbar-brand" href="#" ng-click="gotopage(home)">DARWIN - HardWin</a>
+	          <ul class="nav navbar-nav">
+	            <li><a href="#" ng-click="gotopage(home)"><span class="glyphicon glyphicon-home"></span> Accueil</a></li>
+	          </ul>
+	        </div><!--/.nav-collapse -->
+	        <div class="pull-right">
+				<button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-refresh"></span> Sync</button>
+			    <button type="button" class="btn btn-default navbar-btn" ng-if="loogedIn > 1" data-toggle="modal" data-target="#adduser"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
+			    <button type="button" class="btn btn-default navbar-btn" ng-click="logout()"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
 		    </div>
+	      </div>
+	    </div>
+		{{ errors }}
+		<div ng-switch="page">
+		    <div id ="calendar" class="container">
+				<div class="starter-template">
+					<h1>Calendrier</h1>
+					<!-- Responsive calendar - START -->
+			    	<div class="responsive-calendar">
+			        <div class="controls">
+			            <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
+			            <h4><span data-head-year></span> <span data-head-month></span></h4>
+			            <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
+			        </div><hr/>
+			        <div class="day-headers">
+			          <div class="day header">Mon</div>
+			          <div class="day header">Tue</div>
+			          <div class="day header">Wed</div>
+			          <div class="day header">Thu</div>
+			          <div class="day header">Fri</div>
+			          <div class="day header">Sat</div>
+			          <div class="day header">Sun</div>
+			        </div>
+			        <div class="days" data-group="days">
+			          
+			        </div>
+			      </div>
+			      <!-- Responsive calendar - END -->
+				</div>
+		    </div><!-- container -->
+		    
+		    <div id="todo-list" class="row" ng-switch-when="list">
+			    <div class="col-sm-4 col-sm-offset-4">
+			        <div ng-repeat="user in users">
+			            <label>
+			                <a href="#" ng-click="getUser(user.id)">{{ user.doc.lastname }}, {{ user.doc.firstname }}</a>
+			            </label>
+			        </div>
+			    </div>
+			</div>
+		
+		    <div id="profile" class="container" ng-switch-when="user">
+		    	{{ update_message }}
+		        <div classe="row" align="center">
+		          <h1>Profil</h1>
+		        </div>
+		        <div class="row">
+		          <div class="col-sm-4" align="center">
+		            <h2>Informations</h2>
+		            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
+		            <button type="button" class="btn btn-default">Prendre une photo</button>
+		            <h4>{{ user_info.civ }}.{{ user_info.lastname }} {{ user_info.firstname}}</h4>
+		            <h5>ID : {{ user_info._id}} </h5>
+		            <p>{{ user_info.birthdate }}</p>
+		            <p>{{ user_info.cursus }}</p>
+		            <a href="mailto:{{ user_info.emai}}">{{ user_info.mail}}</a>
+		          </div> <!-- col-sm-4 -->
+		          <div class="col-sm-8" align="center">
+		            <h2>Évaluation</h2>
+		            <div class="row">
+		              <div class="col-sm-4" align="center">
+		                <div class="alert alert-info" role="alert" ng-repeat="exercice in user_info.ex">
+		                	<button ng-click="validateEx($index + 1, $event)" type="button" class="btn btn-default btn-xs pull-left">
+		                		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+		            		</button>
+		            		<span ng-click="reinitEx($index + 1, $event)">exercice {{ $index + 1 }}</span>
+		            		<button ng-click="refuseEx(exercice, $event)" type="button" class="btn btn-default btn-xs pull-right">
+		            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+		        			</button>
+		    			</div>
+		              </div> <!-- col-sm-2 -->
+		              <div class="col-sm-8" align="center">
+		                <div class="input-group center-block">
+		                	<form ng-submit="addComment(user_info._rev, user_info._id)">
+			                  <div class="input-group">
+			                    <input type="text" class="form-control" value="{{ f_user.comment }}" placeholder="Message" ng-model="f_user.comment" />
+			                    <span class="input-group-btn ">
+			                      	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+			                    </span>
+		                  	</div><!-- /input-group -->
+		                  </form>
+		                  <li ng-repeat="(date, comment) in user_info.comments">
+		             		<p>
+		             			{{ comment }}<br />
+		             			<small>{{ date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
+		         			</p>
+			             </li>
+		                </div> <!-- col-sm-6 -->
+		              </div> <!-- row -->
+		            </div> <!-- input-group center-block -->
+		          </div> <!-- col-sm-4 -->
+		        </div> <!-- row info + eval -->
+		        <div classe="row" align="center">
+		          <h2>Commentaire final</h2>
+		          <div class="input-group center-block">
+		            <div class="input-group">
+		              <input type="text" class="form-control" placeholder="Message">
+		              <span class="input-group-btn">
+		                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
+		              </span>
+		            </div><!-- /input-group -->
+		          </div> <!-- input-group center-block -->
+		        </div>
+		    </div><!-- profile -->
 		</div>
+	   
+	   	<div class="modal fade" id="login">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title" align="center">Identification</h4>
+					</div>
+					<div class="modal-body form-group">
+						<div ng-if="errors_login" class="alert alert-danger" role="alert"><p>{{ errors_login }}</p></div>
+					 	<input type="text" class="form-control log" placeholder="Identifiant" ng-value="login.login" ng-model="login_form.login" />
+						<input type="password" class="form-control log" placeholder="Mot de passe" ng-value="login.pwd" ng-model="login_form.pwd" />
+					</div>
+					<div class="modal-footer">
+					<button ng-click="login()" type="button" class="btn btn-primary">Connexion</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal login -->
+		
+		<div class="modal fade" id="adduser">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" align="center">Ajouter un utilisateur</h4>
+					</div>
+					<div class="modal-body form-group">
+					 	<input type="text" class="form-control log" placeholder="Identifiant">
+						<input type="password" class="form-control log" placeholder="Mot de passe">
+						<select name="selectList" class="form-control log">
+						<option value="1">Évaluateur</option> 
+						<option value="1">Administrateur</option> 
+						</select> 
+					</div>
+					<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Valider</button>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal adduser-->
+		
+		<div class="modal fade" id="import_csv">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" align="center">Importation du CSV</h4>
+					</div>
+					<form method="post" enctype="multipart/form-data" action="/api/user">
+						<input type="file" name="csv" />
+				        <button type="submit" class="btn btn-primary btn-lg">Upload</button>
+				    </form>
+					<div class="modal-body form-group" align="center">
+						<p>Aucun CSV détecté pour cette journée, veuillez en importer un.</p>
+						<button class="btn btn-default"><span class="glyphicon glyphicon-import" aria-hidden="true"></span></button>
+						<span class="glyphicon glyphicon-saved" aria-hidden="true"></span>
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal import_csv -->
 	
-	    <div id="profile" class="container" ng-switch-when="user">
-	    	{{ update_message }}
-	        <div classe="row" align="center">
-	          <h1>Profil</h1>
-	        </div>
-	        <div class="row">
-	          <div class="col-sm-4" align="center">
-	            <h2>Informations</h2>
-	            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
-	            <button type="button" class="btn btn-default">Prendre une photo</button>
-	            <h4>{{ user_info.civ }}.{{ user_info.lastname }} {{ user_info.firstname}}</h4>
-	            <h5>ID : {{ user_info._id}} </h5>
-	            <p>{{ user_info.birthdate }}</p>
-	            <p>{{ user_info.cursus }}</p>
-	            <a href="mailto:{{ user_info.emai}}">{{ user_info.mail}}</a>
-	          </div> <!-- col-sm-4 -->
-	          <div class="col-sm-8" align="center">
-	            <h2>Évaluation</h2>
-	            <div class="row">
-	              <div class="col-sm-4" align="center">
-	                <div class="alert alert-info" role="alert" ng-repeat="exercice in user_info.ex">
-	                	<button ng-click="validateEx($index + 1, $event)" type="button" class="btn btn-default btn-xs pull-left">
-	                		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-	            		</button>
-	            		<span ng-click="reinitEx($index + 1, $event)">exercice {{ $index + 1 }}</span>
-	            		<button ng-click="refuseEx(exercice, $event)" type="button" class="btn btn-default btn-xs pull-right">
-	            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-	        			</button>
-	    			</div>
-	              </div> <!-- col-sm-2 -->
-	              <div class="col-sm-8" align="center">
-	                <div class="input-group center-block">
-	                	<form ng-submit="addComment(user_info._rev, user_info._id)">
-		                  <div class="input-group">
-		                    <input type="text" class="form-control" value="{{ f_user.comment }}" placeholder="Message" ng-model="f_user.comment" />
-		                    <span class="input-group-btn ">
-		                      	<button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
-		                    </span>
-	                  	</div><!-- /input-group -->
-	                  </form>
-	                  <li ng-repeat="(date, comment) in user_info.comments">
-	             		<p>
-	             			{{ comment }}<br />
-	             			<small>{{ date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
-	         			</p>
-		             </li>
-	                </div> <!-- col-sm-6 -->
-	              </div> <!-- row -->
-	            </div> <!-- input-group center-block -->
-	          </div> <!-- col-sm-4 -->
-	        </div> <!-- row info + eval -->
-	        <div classe="row" align="center">
-	          <h2>Commentaire final</h2>
-	          <div class="input-group center-block">
-	            <div class="input-group">
-	              <input type="text" class="form-control" placeholder="Message">
-	              <span class="input-group-btn">
-	                <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-send"></span></button>
-	              </span>
-	            </div><!-- /input-group -->
-	          </div> <!-- input-group center-block -->
-	        </div>
-	    </div><!-- profile -->
-   </div>
-
-	<div class="modal hide fade" id="myModal">
-	  	<div class="modal-header">
-	    	<a class="close" data-dismiss="modal">×</a>
-	    	<h3>Modal header</h3>
-	  	</div>
-	  	<div class="modal-body">
-	    	<p>One fine body…</p>
-	  	</div>
-	  	<div class="modal-footer">
-	    	<a href="#" class="btn">Close</a>
-	    	<a href="#" class="btn btn-primary">Save changes</a>
-		</div>
+		<div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
 	</div>
- 	<a class="btn" data-toggle="modal" href="#myModal" >Launch Modal</a>
-
-    <div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
-
-    <script type="text/javascript" src="static/js/jquery-1.11.1.min.js"></script>
+	<div class="loader">
+		<img src="static/img/loading.gif" alt="loading" />
+	</div>
+    <script type="text/javascript" src="static/js/jquery.js"></script>
     <script type="text/javascript" src="static/js/bootstrap.js"> </script>
     <script src="http://code.angularjs.org/1.2.27/angular.js"></script>
-    <script src="static/bower_components/angular-animate/angular-animate.min.js"></script>
+    <script type="text/javascript" src="static/js/responsive-calendar.min.js"></script>
 	<script src="static/js/pouchdb-3.1.0.min.js"></script>
 	<script src="static/js/core.js"></script>
     <script type="text/javascript">
-	    $(document).load(function(){
-	        $('#myModal').modal('show');
+	    jQuery(function($){
+	        var now = new Date();
+	        var date = now.getFullYear() + '-' + (now.getMonth() + 1);
+	        $(".responsive-calendar").responsiveCalendar({
+				time: date,
+				onDayClick: function(e) { console.log(this); $("#import_csv").modal("show"); }
+			});
 	    });
     </script>
   </body>
 </html>
-<!--    	
-			<div class="jumbotron text-center">
-	            <h1>Number of Users <span class="label label-info">{{ users.length }}</span></h1>
-	        </div>
-	        
-			
-			<div id="todo-form" class="row" ng-show="add">
-	            <div class="col-sm-8 col-sm-offset-2 text-center">
-	                <form>
-	                    <div class="form-group">
-	                        <input type="text" ng-model="formData.id" value="1" />
-	                        <input type="text" class="form-control input-lg text-center" placeholder="Add user comments" ng-model="formData.comment" />
-	                    </div>
-	
-	                    <button type="submit" class="btn btn-primary btn-lg" ng-click="createUser()">Add</button>
-	                </form>
-	            </div>
-	        </div>
-	        
-	            <div class="col-sm-4 col-sm-offset-4">
-	            	<form method="post" enctype="multipart/form-data" action="/api/user">
-	            		<input type="file" name="csv" />
-	                    <button type="submit" class="btn btn-primary btn-lg">Upload</button>
-	                </form>
-	            </div>
-	             <li class="col-sm-4 col-sm-offset-4" ng-repeat="comment in user_info.comments.slice().reverse()">
-             		<p>
-             			{{ comment.comment }}<br />
-             			<small>{{ comment.date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
-         			</p>
-	             </li>
-			</div>
-	        
-        </div>
-    	<script src="/js/bootstrap.min.js"></script>        
-	</body>
-</html>
--->

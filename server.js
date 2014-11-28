@@ -7,17 +7,17 @@ var converter = require("csvtojson").core.Converter;
 var fs = require("fs");
 var couchdb = require('couch-db')('http://localhost:5984');
 var PouchDB = require('pouchdb');
-var multer = require('multer');
+var multer = require('multer'); 
 
 // API CONFIG
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({'extended':'true'}));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({'extended':'true'})); // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.json()); // for parsing application/json
+app.use(multer()); // for parsing multipart/form-data
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
-app.use(multer());
 
 // Connect to db
 var db = couchdb.database('student');
@@ -57,12 +57,36 @@ app.post('/api/user', function(req, res, next) {
 	fileStream.pipe(csvConverter);
 });
 
+app.post('/api/login', function(req, res, next) {
+	var db = new PouchDB('http://62.210.85.76:5984/users');
+	db.get(req.body.login, function(err, doc){
+		if (err)
+			{
+				res.json(-1);
+				console.log(err);
+				return (false);
+			}
+			date = new Date();
+			if (doc.pwd === req.body.login)
+				res.json(doc.accred);
+			else
+				res.json(0);
+	});
+	console.log(req.body);
+});
+
 app.get('/api/user/:user_id', function(req, res) {
 	res.json(user[req.params.user_id]);
 });
 
 app.get('*', function(req, res) {
 	res.sendfile('./public/index.html');
+});
+
+app.all('/*', function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+	res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
+  next();
 });
 
 // listen
