@@ -12,6 +12,7 @@
 
 	    <!-- Bootstrap core CSS -->
 	    <link href="dist/css/bootstrap.css" rel="stylesheet">
+	    <link href="dist/css/responsive-calendar.css" rel="stylesheet" media="screen">
 
 	    <!-- Custom styles for this template -->
 	    <link href="starter-template.css" rel="stylesheet">
@@ -38,7 +39,27 @@
 		    <div id ="calendar" class="container">
 				<div class="starter-template">
 					<h1>Calendrier</h1>
-					<p class="lead"></p>
+					<!-- Responsive calendar - START -->
+			    	<div class="responsive-calendar">
+			        <div class="controls">
+			            <a class="pull-left" data-go="prev"><div class="btn btn-primary">Prev</div></a>
+			            <h4><span data-head-year></span> <span data-head-month></span></h4>
+			            <a class="pull-right" data-go="next"><div class="btn btn-primary">Next</div></a>
+			        </div><hr/>
+			        <div class="day-headers">
+			          <div class="day header">Mon</div>
+			          <div class="day header">Tue</div>
+			          <div class="day header">Wed</div>
+			          <div class="day header">Thu</div>
+			          <div class="day header">Fri</div>
+			          <div class="day header">Sat</div>
+			          <div class="day header">Sun</div>
+			        </div>
+			        <div class="days" data-group="days">
+			          
+			        </div>
+			      </div>
+			      <!-- Responsive calendar - END -->
 				</div>
 		    </div><!-- container -->
 
@@ -157,13 +178,28 @@
 
 		<div id="footer" class="text-center"><p>© 2009-2014 ETNA SARL. All rights reserved.</p></div>
 
-		<script type="text/javascript" src="dist/js/jquery-1.11.1.min.js"></script>
+
+
+		<script type="text/javascript" src="dist/js/jquery.js"></script>
+		<script type="text/javascript"src="dist/js/responsive-calendar.js"></script>
 		<script type="text/javascript" src="dist/js/bootstrap.js"> </script>
 		<script type="text/javascript">
 		    $(window).load(function(){
 		        $('#import_csv').modal('show');
 		        // backdrop: 'static'
 		    });
+		</script>
+		<script type="text/javascript">
+		$(document).ready(function () {
+			$(".responsive-calendar").responsiveCalendar({
+				time: '2014-11',
+				events: {
+					"2013-04-30": {"number": 5, "url": "http://w3widgets.com/responsive-slider"},
+					"2013-04-26": {"number": 1, "url": "http://w3widgets.com"}, 
+					"2013-05-03":{"number": 1}, 
+					"2013-06-12": {}}
+			});
+		});
 		</script>
 
   	</body>
