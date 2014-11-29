@@ -7,7 +7,8 @@ var converter = require("csvtojson").core.Converter;
 var fs = require("fs");
 var couchdb = require('couch-db')('http://localhost:5984');
 var PouchDB = require('pouchdb');
-var multer = require('multer'); 
+var multer = require('multer');
+var session = require('cookie-session');
 
 // API CONFIG
 app.use(express.static(__dirname + '/public'));
@@ -18,24 +19,34 @@ app.use(multer()); // for parsing multipart/form-data
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride());
+app.use(session({
+  keys: ['name']
+}));
+
+app.set('trust proxy', 1); // trust first proxy
 
 // Connect to db
 var db = couchdb.database('student');
 
 // API ROUTE
 app.get('/api/users', function(req, res) {
-	res.json('ok');
+	res.json(200);
 });
 
-app.post('/api/user', function(req, res, next) {
+app.post('/api/users/:date', function(req, res, next) {
+	if (req.files.csv.mimetype != 'text/csv')
+	{
+		res.json({error: 'invalid type'});
+		return (false);
+	}
 	var csvFileName = req.files.csv.path;
 	var fileStream = fs.createReadStream(csvFileName);
-	var db = new PouchDB('http://localhost:5984/student');
-	
+	var db = new PouchDB('http://localhost:5984/student' + req.params.date);
 	var param = {
 	    delimiter: ';'
 	};
 	var csvConverter = new converter(param);
+	var i = 0;
 	csvConverter.on("end_parsed",function(users) {
 		for (user in users)
 			{
@@ -51,42 +62,38 @@ app.post('/api/user', function(req, res, next) {
 				}, u.id.toString()).then(function(response) {
 					console.log(response);
 				});
+				i++;
 			}
-			res.redirect('/');
+			res.json({success: i});
 	});
 	fileStream.pipe(csvConverter);
 });
 
 app.post('/api/login', function(req, res, next) {
-	var db = new PouchDB('http://62.210.85.76:5984/users');
+	var db = new PouchDB('http://localhost:5984/users');
 	db.get(req.body.login, function(err, doc){
 		if (err)
 			{
 				res.json(-1);
-				console.log(err);
 				return (false);
 			}
-			date = new Date();
 			if (doc.pwd === req.body.login)
+			{
 				res.json(doc.accred);
+				req.session.name = req.body.login;
+			}
 			else
 				res.json(0);
 	});
-	console.log(req.body);
 });
 
 app.get('/api/user/:user_id', function(req, res) {
+	console.log(req.session.name);
 	res.json(user[req.params.user_id]);
 });
 
 app.get('*', function(req, res) {
 	res.sendfile('./public/index.html');
-});
-
-app.all('/*', function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-	res.header('Access-Control-Allow-Headers', 'Content-Type,X-Requested-With');
-  next();
 });
 
 // listen

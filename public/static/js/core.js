@@ -7,11 +7,13 @@ darwin.controller('mainController',
 	{
     $scope.formData = {};
     $scope.f_user = {};
-    $scope.page = "calendar";
+    $scope.csv = {};
+    $scope.curr_page = "calendar";
     $scope.csv = {};
     $scope.user_id = 0;
     $scope.login_form = {};
     $scope.errors_login = '';
+    $scope.csv_date = 0;
     $scope.loggedIn = $window.sessionStorage.token;
     //$scope.$parent.loggedIn = $scope.loggedIn;
 	  //$rootScope.loggedIn = $window.sessionStorage.token;
@@ -19,6 +21,26 @@ darwin.controller('mainController',
     // when landing on the page, get all todos and show them
     $http.get('/api/users')
         .success(function(data) {
+        	var db_all = new PouchDB('http://localhost:5984/_all_dbs');
+					db_all.allDocs(function(err, response){
+						if (err)
+							{
+								console.log(err);
+								return (false);
+							}
+						for(r in response)
+						{
+							if (res = response[r].match(/(student)([0-9]{8})/))
+								{
+									var options = {};
+									var f_date = res[2].match(/([0-9]{4})([0-9]{2})([0-9]{2})/);
+									var cal_date = f_date[1] + "-" + f_date[2] + "-" + f_date[3];
+									options[cal_date] = {"number": 1};
+									$('.responsive-calendar').responsiveCalendar('edit',options);
+								}
+						}
+					});
+        	$cal = $(".responsive-calendar").responsiveCalendar();
         	pouchdb.sync('http://localhost:5984/student'); // todo activate cors
  					pouchdb.allDocs({include_docs: true}, function(err, response){
  						$rootScope.$apply(function() {
@@ -32,28 +54,73 @@ darwin.controller('mainController',
 					});
         })
         .error(function(data) {
-            console.warn('Error: ' + data);
+        	alert('Cannot load Application, try later or contact admin');
+          console.error('Error: ' + data);
         });
 		
 		$scope.gotopage = function(page)
 		{
-			$scope.page = page;
+			$scope.curr_page = page;
 		};
 		
     // when submitting the add form, send the text to the node API
     $scope.createUser = function() {
         $http.post('/api/user', $scope.formData)
-            .success(function(data) {
-            	pouchdb.replicate.from('http://62.210.85.76:5984/student')
-		 						.on('complete', function (info) {
-		 							alert('end of synchro');
-		 						});
-                $scope.formData = {}; // clear the form so our user is ready to enter another
-                $scope.users[data.id] = data.comment;
-            })
-            .error(function(data) {
-                console.warn('Error: ' + data);
-            });
+        .success(function(data) {
+        	pouchdb.replicate.from('http://62.210.85.76:5984/student')
+					.on('complete', function (info) {
+						alert('end of synchro');
+					});
+          $scope.formData = {}; // clear the form so our user is ready to enter another
+          $scope.users[data.id] = data.comment;
+      	})
+        .error(function(data) {
+          console.error('Error: ' + data);
+        });
+    };
+    
+    $scope.csv_upload = function($event)
+    {
+    	if (!$scope.file)
+    		{
+    			console.log($("input#date_csv").val());
+    			$scope.csv.error = "Please select a file";
+    			return (false);
+    		}
+    	date = $("input#date_csv").val();
+			var url = '/api/users/' + date.replace(/-/g,'');
+			var file = $scope.file[0];
+			var fd = new FormData();
+			
+			fd.append('csv', file);
+			if (file.type == "text/csv")
+				{
+					$http.post(url, fd, {
+						transformRequest: angular.identity,
+						headers: {'content-Type': undefined}
+					})
+					.success(function(data){
+						console.log(data);
+						if (data.error)
+							$scope.csv.error = data.error;
+						else
+							{
+								$scope.message = data.success + ' lignes importées';
+								var options = {};
+								options[date] = {"number": 1};
+								$('.responsive-calendar').responsiveCalendar('edit',options);
+								$("#import_csv").modal("hide");
+							}
+					})
+					.error(function(data){
+						$scope.csv.error = 'Erreur lors du traitement';
+						console.error('Error' + data);
+					});
+				}
+			else
+				{
+					$scope.csv.error = 'Invalid file, csv is required';
+				}
     };
     
     $scope.login = function()
@@ -62,13 +129,11 @@ darwin.controller('mainController',
     		{
 		    	$http.post('/api/login', $scope.login_form)
 		    		.success(function(data){
-		    			console.log(data);
 		    			if (data > 0)
 		    				{
 		    					$("#login").modal('hide');
 		    					$window.sessionStorage.token = data;
 		    					$scope.loggedIn = $window.sessionStorage.token;
-		    					console.log($window.sessionStorage.token);
 		    				}
 	    				else
 		    				$scope.errors_login = 'invalid account';
@@ -86,7 +151,7 @@ darwin.controller('mainController',
         	{
             $scope.loggedIn = false;
             delete $window.sessionStorage.token;
-            $location.reload();
+            $window.location.reload();
         	}
     };
     
@@ -100,7 +165,7 @@ darwin.controller('mainController',
     				return (false);
     			}
     			$scope.user_info = res;
-    			$scope.page = 'user';
+    			$scope.curr_page = 'user';
     		});
     	});
     };
@@ -219,11 +284,24 @@ darwin.controller('mainController',
 
 darwin.run(function ($rootScope) {
 	// todo more than a session
-  if (!$rootScope.loggedIn)
+  if ($rootScope.loggedIn)
   	{
   		$("#login").modal({backdrop: 'static'});
 		}
 });
+
+darwin.directive('fileInput', ['$parse', function($parse){
+	return {
+		restrict:'A',
+		link: function(scope, el, attrs) {
+			el.bind('change', function(){
+				$parse(attrs.fileInput)
+				.assign(scope, el[0].files);
+				scope.$apply();
+			});
+		}
+	};
+}]);
 
 darwin.factory('pouchdb', function() {
   PouchDB.enableAllDbs = true;
