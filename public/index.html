@@ -240,7 +240,7 @@
 				onDayClick: function(e) { 
 					$this = $(this);
 					var day = ($this.attr('data-day') < 10) ? "0" + $this.attr('data-day') : $this.attr('data-day');
-					var date = $this.attr('data-year') + "-" + $this.attr('data-month') + "-" + $this.attr('data-day');
+					var date = $this.attr('data-year') + "-" + $this.attr('data-month') + "-" + day;
 					console.log(date);
 					if ($this.parent().hasClass('active'))
 						$("#day_view").modal("show");
