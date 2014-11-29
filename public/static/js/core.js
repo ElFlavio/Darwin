@@ -16,6 +16,7 @@ darwin.controller('mainController',
     $scope.login_form = {};
     $scope.errors_login = '';
     $scope.csv_date = 0;
+    $scope.curr_date = 0;
     $scope.loggedIn = $window.sessionStorage.token;
     
     // when landing on the page, get all todos and show them
@@ -56,7 +57,8 @@ darwin.controller('mainController',
 		$scope.show_events = function()
 		{
 			date = $("input#date_csv_show").val();
-			var db = new PouchDB('student' + date.replace(/-/g,''));
+			$scope.curr_date = date.replace(/-/g,'');
+			var db = new PouchDB('student' + $scope.curr_date);
 			db.allDocs({include_docs: true}, function(err, response){
 				$rootScope.$apply(function() {
 					if (err)
@@ -136,6 +138,8 @@ darwin.controller('mainController',
 								options[date] = {"number": 1};
 								$('.responsive-calendar').responsiveCalendar('edit',options);
 								$("#import_csv").modal("hide");
+								$scope.file = null;
+								fd = null;
 							}
 					})
 					.error(function(data){
@@ -184,13 +188,14 @@ darwin.controller('mainController',
     
     $scope.getUser = function(id) {
     	$scope.user_id = id;
+    	var pouchdb = new PouchDB("student" + $scope.curr_date);
     	pouchdb.get(id, function(err, res) {
     		$rootScope.$apply(function() {
     			if (err)
-    			{
-    				$scope.errors = err.message;
-    				return (false);
-    			}
+    				{
+    					$scope.errors = err.message;
+    					return (false);
+    				}
     			$scope.user_info = res;
     			$scope.curr_page = 'user';
     		});
@@ -199,6 +204,7 @@ darwin.controller('mainController',
     
     $scope.addComment = function (rev, id)
     {
+    	var pouchdb = new PouchDB("student" + $scope.curr_date);
     	pouchdb.get(id, function(err, otherDoc) {
     		var date = Date.now();
     		otherDoc.comments[date] = $scope.f_user.comment;
@@ -228,7 +234,7 @@ darwin.controller('mainController',
   	
   	$scope.validateEx = function(ex, $event)
   	{
-  		$($event.currentTarget).parent().removeClass("alert-info alert-danger").addClass("alert-success");
+  		var pouchdb = new PouchDB("student" + $scope.curr_date);
   		pouchdb.get($scope.user_id, function(err, otherDoc) {
   			otherDoc.ex[ex] = true;
 			  pouchdb.put({
@@ -247,6 +253,7 @@ darwin.controller('mainController',
 				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
 				  			return (false);
 				  		}
+			  		$($event.currentTarget).parent().removeClass("alert-info alert-danger").addClass("alert-success");
 				  	console.log(response);
 			  	});
 			  });
@@ -255,9 +262,10 @@ darwin.controller('mainController',
 		  	
   	$scope.reinitEx = function(ex, $event)
   	{
-  		$($event.currentTarget).parent().removeClass("alert-success alert-danger").addClass("alert-info");
+  		var pouchdb = new PouchDB("student" + $scope.curr_date);
   		pouchdb.get($scope.user_id, function(err, otherDoc) {
   			otherDoc.ex[ex] = null;
+  			console.log(otherDoc.ex);
 			  pouchdb.put({
 			    birthdate: otherDoc.birthdate,
 			  	civ: otherDoc.civ,
@@ -274,6 +282,7 @@ darwin.controller('mainController',
 				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
 				  			return (false);
 				  		}
+			  		$($event.currentTarget).parent().removeClass("alert-success alert-danger").addClass("alert-info");
 				  	console.log(response);
 			  	});
 			  });
@@ -282,7 +291,7 @@ darwin.controller('mainController',
   	
   	$scope.refuseEx = function(ex, $event)
   	{
-  		$($event.currentTarget).parent().removeClass("alert-info alert-success").addClass("alert-danger");
+  		var pouchdb = new PouchDB("student" + $scope.curr_date);
   		pouchdb.get($scope.user_id, function(err, otherDoc) {
   			otherDoc.ex[ex] = false;
 			  pouchdb.put({
@@ -301,10 +310,21 @@ darwin.controller('mainController',
 				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
 				  			return (false);
 				  		}
+			  		$($event.currentTarget).parent().removeClass("alert-info alert-success").addClass("alert-danger");
 				  	console.log(response);
 			  	});
 			  });
 			});
+  	};
+  	
+  	$scope.get_ex_class = function(ex)
+  	{
+  		console.log(ex);
+  		if (ex === true)
+  			return "alert-success";
+			else if (ex === false)
+				return "alert-danger";
+  		return "alert-info";
   	};
   }
 ]);

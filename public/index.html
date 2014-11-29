@@ -102,12 +102,12 @@
 		            <h2>Évaluation</h2>
 		            <div class="row">
 		              <div class="col-sm-4" align="center">
-		                <div class="alert alert-info" role="alert" ng-repeat="exercice in user_info.ex">
-		                	<button ng-click="validateEx($index + 1, $event)" type="button" class="btn btn-default btn-xs pull-left">
+		                <div class="alert" role="alert" ng-repeat="(key, val) in user_info.ex" ng-class="get_ex_class(val)">
+		                	<button ng-click="validateEx(key, $event)" type="button" class="btn btn-default btn-xs pull-left">
 		                		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 		            		</button>
-		            		<span ng-click="reinitEx($index + 1, $event)">exercice {{ $index + 1 }}</span>
-		            		<button ng-click="refuseEx(exercice, $event)" type="button" class="btn btn-default btn-xs pull-right">
+		            		<span ng-click="reinitEx(key, $event)">exercice {{ key }} </span>
+		            		<button ng-click="refuseEx(key, $event)" type="button" class="btn btn-default btn-xs pull-right">
 		            			<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 		        			</button>
 		    			</div>

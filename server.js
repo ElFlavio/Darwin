@@ -48,6 +48,7 @@ app.post('/api/users/:date', function(req, res, next) {
 	};
 	var csvConverter = new converter(param);
 	var i = 0;
+	var d_ex = {'01': null, "02": null, "03": null, "04": null, "05": null, "06": null, "07": null, "08": null, "09": null, "10": null, "11": null, "12": null};
 	csvConverter.on("end_parsed",function(users) {
 		for (user in users)
 			{
@@ -59,7 +60,7 @@ app.post('/api/users/:date', function(req, res, next) {
 					birthdate: u.birthdate,
 					comments: {0: u.comment_tech},
 					cursus: u.learnings_level + ' - ' + u.learnings_expertise,
-					ex: {1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
+					ex: d_ex
 				}, u.id.toString()).then(function(response) {
 					console.log(response);
 				});
