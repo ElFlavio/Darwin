@@ -26,7 +26,7 @@ app.use(session({
 app.set('trust proxy', 1); // trust first proxy
 
 // Connect to db
-var db = couchdb.database('student');
+//var db = couchdb.database('student');
 
 // API ROUTE
 app.get('/api/users', function(req, res) {

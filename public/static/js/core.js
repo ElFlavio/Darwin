@@ -21,7 +21,7 @@ darwin.controller('mainController',
     // when landing on the page, get all todos and show them
     $http.get('/api/users')
         .success(function(data) {
-        	var db_all = new PouchDB('http://localhost:5984/_all_dbs');
+        	var db_all = new PouchDB('http://62.210.85.76:5984/_all_dbs');
 					db_all.allDocs(function(err, response){
 						if (err)
 							{
@@ -41,7 +41,7 @@ darwin.controller('mainController',
 						}
 					});
         	$cal = $(".responsive-calendar").responsiveCalendar();
-        	pouchdb.sync('http://localhost:5984/student'); // todo activate cors
+        	//pouchdb.sync('http://localhost:5984/student'); // todo activate cors
  					pouchdb.allDocs({include_docs: true}, function(err, response){
  						$rootScope.$apply(function() {
 							if (err)
