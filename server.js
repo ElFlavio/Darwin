@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var converter = require("csvtojson").core.Converter;
 var fs = require("fs");
-var couchdb = require('couch-db')('http://localhost:5984');
+var couchdb = require('couch-db')('http://62.210.85.76:5984');
 var PouchDB = require('pouchdb');
 var multer = require('multer');
 var session = require('cookie-session');
@@ -41,7 +41,7 @@ app.post('/api/users/:date', function(req, res, next) {
 	}
 	var csvFileName = req.files.csv.path;
 	var fileStream = fs.createReadStream(csvFileName);
-	var db = new PouchDB('http://localhost:5984/student' + req.params.date);
+	var db = new PouchDB('http://62.210.85.76:5984/student' + req.params.date);
 	var param = {
 	    delimiter: ';'
 	};
@@ -70,7 +70,7 @@ app.post('/api/users/:date', function(req, res, next) {
 });
 
 app.post('/api/login', function(req, res, next) {
-	var db = new PouchDB('http://localhost:5984/users');
+	var db = new PouchDB('http://62.210.85.76:5984/users');
 	db.get(req.body.login, function(err, doc){
 		if (err)
 			{
