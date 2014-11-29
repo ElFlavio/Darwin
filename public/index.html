@@ -173,15 +173,17 @@
 						<h4 class="modal-title" align="center">Ajouter un utilisateur</h4>
 					</div>
 					<div class="modal-body form-group">
-					 	<input type="text" class="form-control log" placeholder="Identifiant">
-						<input type="password" class="form-control log" placeholder="Mot de passe">
-						<select name="selectList" class="form-control log">
-						<option value="1">Évaluateur</option> 
-						<option value="1">Administrateur</option> 
+						<div ng-if="new_user.error" class="alert alert-danger" role="alert"><p>{{ new_user.error }}</p></div>
+						<div ng-if="new_user.success" class="alert alert-success" role="alert"><p>{{ new_user.success }}</p></div>
+					 	<input type="text" class="form-control log" placeholder="Identifiant" ng-model="new_user.login" />
+						<input type="password" class="form-control log" placeholder="Mot de passe" ng-model="new_user.pwd"/>
+						<select name="selectList" class="form-control log" ng-model="new_user.accred">
+							<option value="1">Évaluateur</option> 
+							<option value="2">Administrateur</option> 
 						</select> 
 					</div>
 					<div class="modal-footer">
-					<button type="button" class="btn btn-primary">Valider</button>
+					<button ng-click="create_user()" type="button" class="btn btn-primary">Valider</button>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -213,11 +215,13 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<div ng-if="admin.error" class="alert alert-danger" role="alert"><p> {{ admin.error }} </p></div>
 						<h4 class="modal-title" align="center">descriptif de la journée</h4>
 					</div>
 					<div class="modal-body form-group" align="center">
-						<button ng-click="gotopage('list')" class="btn btn-default" data-dismiss="modal">Acceder à la journée <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button><br /><br />
-						<button  class="btn btn-default" ng-if="loggedIn > 1" data-dismiss="modal">Supprimer les datas <span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span></button>
+						<p><input id="date_csv_show" type="hidden" name="csv" value="0" /></p>
+						<button ng-click="show_events()" class="btn btn-default" data-dismiss="modal">Acceder à la journée <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button><br /><br />
+						<button ng-click="remove_events()" class="btn btn-default" ng-if="loggedIn > 1" data-dismiss="modal">Supprimer les datas <span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span></button>
 					</div>
 				</div><!-- /.modal-content -->
 			</div><!-- /.modal-dialog -->
@@ -242,8 +246,10 @@
 					var day = ($this.attr('data-day') < 10) ? "0" + $this.attr('data-day') : $this.attr('data-day');
 					var date = $this.attr('data-year') + "-" + $this.attr('data-month') + "-" + day;
 					if ($this.parent().hasClass('active'))
+					{
 						$("#day_view").modal("show");
-					else
+						$("#day_view").find("input#date_csv_show").val(date);
+					}else
 					{
 						$("#import_csv").find("input#date_csv").val(date);
 						$("#import_csv").modal("show");

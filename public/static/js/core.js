@@ -2,12 +2,14 @@
 var darwin = angular.module('darwin', []);
 
 darwin.controller('mainController',
-	['$scope', '$http', '$rootScope', '$location', '$window', '$rootScope', 'pouchdb',
-	function($scope, $http, $rootScope, $location, $window, $rootScope,pouchdb)
+	['$scope', '$http', '$rootScope', '$location', '$window', '$rootScope',
+	function($scope, $http, $rootScope, $location, $window, $rootScope)
 	{
     $scope.formData = {};
     $scope.f_user = {};
     $scope.csv = {};
+    $scope.admin = {};
+    $scope.new_user = {};
     $scope.curr_page = "calendar";
     $scope.csv = {};
     $scope.user_id = 0;
@@ -15,75 +17,99 @@ darwin.controller('mainController',
     $scope.errors_login = '';
     $scope.csv_date = 0;
     $scope.loggedIn = $window.sessionStorage.token;
-    //$scope.$parent.loggedIn = $scope.loggedIn;
-	  //$rootScope.loggedIn = $window.sessionStorage.token;
     
     // when landing on the page, get all todos and show them
+    $scope.new_user.accred = 1;
     $http.get('/api/users')
-        .success(function(data) {
-        	var db_all = new PouchDB('http://62.210.85.76:5984/_all_dbs');
-					db_all.allDocs(function(err, response){
-						if (err)
-							{
-								console.log(err);
-								return (false);
-							}
-						for(r in response)
+    .success(function(data) {
+    	var db_all = new PouchDB('http://62.210.85.76:5984/_all_dbs');
+			db_all.allDocs(function(err, response){
+				if (err)
+					{
+						console.log(err);
+						return (false);
+					}
+				for(r in response)
+				{
+					if (res = response[r].match(/(student)([0-9]{8})/))
 						{
-							if (res = response[r].match(/(student)([0-9]{8})/))
-								{
-									var options = {};
-									var f_date = res[2].match(/([0-9]{4})([0-9]{2})([0-9]{2})/);
-									var cal_date = f_date[1] + "-" + f_date[2] + "-" + f_date[3];
-									options[cal_date] = {"number": 1};
-									$('.responsive-calendar').responsiveCalendar('edit',options);
-								}
+							PouchDB.sync(res[0], 'http://62.210.85.76:5984/' + res[0]);
+							var options = {};
+							var f_date = res[2].match(/([0-9]{4})([0-9]{2})([0-9]{2})/);
+							var cal_date = f_date[1] + "-" + f_date[2] + "-" + f_date[3];
+							options[cal_date] = {"number": 1};
+							$('.responsive-calendar').responsiveCalendar('edit',options);
 						}
-					});
-        	$cal = $(".responsive-calendar").responsiveCalendar();
-        	//pouchdb.sync('http://localhost:5984/student'); // todo activate cors
- 					pouchdb.allDocs({include_docs: true}, function(err, response){
- 						$rootScope.$apply(function() {
-							if (err)
-								{
-									res = err.message;
-									return (false);
-								}
-							$scope.users = response.rows;
-						});
-					});
-        })
-        .error(function(data) {
-        	alert('Cannot load Application, try later or contact admin');
-          console.error('Error: ' + data);
-        });
+				}
+			});
+		})
+    .error(function(data) {
+    	alert('Cannot load Application, try later or contact admin');
+      console.error('Error: ' + data);
+    });
 		
 		$scope.gotopage = function(page)
 		{
 			$scope.curr_page = page;
 		};
 		
+		$scope.show_events = function()
+		{
+			date = $("input#date_csv_show").val();
+			var db = new PouchDB('student' + date.replace(/-/g,''));
+			db.allDocs({include_docs: true}, function(err, response){
+				$rootScope.$apply(function() {
+					if (err)
+						{
+							res = err.message;
+							return (false);
+						}
+					$scope.users = response.rows;
+				});
+			});
+			$scope.curr_page = 'list';
+		};
+		
+		$scope.remove_events = function()
+		{
+			if ($scope.loggedIn != 2)
+			{
+				$scope.admin.error = "Cannot do this action";
+				return (false);
+			}
+			date = $("input#date_csv_show").val();
+			PouchDB.destroy('student' + date.replace(/-/g,''), function(err, info) {
+				if (err)
+					{
+						console.log(err);
+						$scope.admin.error = err;
+						return (false);
+					}
+					console.log(info);
+			});
+			$('.responsive-calendar').responsiveCalendar('clear',[date]);
+			$scope.curr_page = 'calendar';
+		};
+		
     // when submitting the add form, send the text to the node API
-    $scope.createUser = function() {
-        $http.post('/api/user', $scope.formData)
-        .success(function(data) {
-        	pouchdb.replicate.from('http://62.210.85.76:5984/student')
-					.on('complete', function (info) {
-						alert('end of synchro');
-					});
-          $scope.formData = {}; // clear the form so our user is ready to enter another
-          $scope.users[data.id] = data.comment;
-      	})
-        .error(function(data) {
-          console.error('Error: ' + data);
-        });
+    $scope.create_user = function() {
+    	 $http.post('/api/user', $scope.new_user)
+    	 .success(function(data){
+    	 		console.log(data);
+    	 		$scope.new_user.success = "user created";
+    	 		$scope.new_user.login = '';
+    	 		$scope.new_user.pwd = '';
+    	 		$scope.new_user.accred = 1;
+    	 })
+    	 .error(function(data){
+    	 		$scope.new_user.error = data;
+    	 });
     };
     
     $scope.csv_upload = function($event)
     {
     	if (!$scope.file)
     		{
-    			console.log($("input#date_csv").val());
     			$scope.csv.error = "Please select a file";
     			return (false);
     		}
@@ -128,19 +154,20 @@ darwin.controller('mainController',
     	if ($scope.login_form.login != undefined && $scope.login_form.pwd != undefined)
     		{
 		    	$http.post('/api/login', $scope.login_form)
-		    		.success(function(data){
-		    			if (data > 0)
-		    				{
-		    					$("#login").modal('hide');
-		    					$window.sessionStorage.token = data;
-		    					$scope.loggedIn = $window.sessionStorage.token;
-		    				}
-	    				else
-		    				$scope.errors_login = 'invalid account';
-		    		})
-		    		.error(function(data){
-					    $scope.errors_login = 'data';
-		    		});
+	    		.success(function(data){
+	    			var d = data.accred;
+	    			if (d > 0)
+	    				{
+	    					$("#login").modal('hide');
+	    					$window.sessionStorage.token = d;
+	    					$scope.loggedIn = $window.sessionStorage.token;
+	    				}
+    				else
+	    				$scope.errors_login = 'invalid account';
+	    		})
+	    		.error(function(data){
+				    $scope.errors_login = 'data';
+	    		});
 	    	}
     	else
     		$scope.errors_login = 'Input cannot be empty';
@@ -284,7 +311,7 @@ darwin.controller('mainController',
 
 darwin.run(function ($rootScope) {
 	// todo more than a session
-  if ($rootScope.loggedIn)
+  if (!$rootScope.loggedIn)
   	{
   		$("#login").modal({backdrop: 'static'});
 		}

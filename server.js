@@ -9,6 +9,7 @@ var couchdb = require('couch-db')('http://62.210.85.76:5984');
 var PouchDB = require('pouchdb');
 var multer = require('multer');
 var session = require('cookie-session');
+var crypto = require('crypto');
 
 // API CONFIG
 app.use(express.static(__dirname + '/public'));
@@ -77,9 +78,9 @@ app.post('/api/login', function(req, res, next) {
 				res.json(-1);
 				return (false);
 			}
-			if (doc.pwd === req.body.login)
+			if (doc.pwd === crypto.createHash('sha256').update(req.body.pwd).digest('hex'))
 			{
-				res.json(doc.accred);
+				res.json(doc);
 				req.session.name = req.body.login;
 			}
 			else
@@ -90,6 +91,28 @@ app.post('/api/login', function(req, res, next) {
 app.get('/api/user/:user_id', function(req, res) {
 	console.log(req.session.name);
 	res.json(user[req.params.user_id]);
+});
+
+app.post('/api/user', function(req, res) {
+	var db = new PouchDB('http://62.210.85.76:5984/users');
+	db.get(req.body.login, function(err, doc){
+		if (err)
+			{
+				if (err.status == 404)
+				{
+					var pass = crypto.createHash('sha256').update(req.body.pwd).digest('hex');
+					db.put({
+					  pwd: pass,
+					  accred: req.body.accred
+					}, req.body.login).then(function(response) {
+						res.json(response);
+					});
+				}
+				res.json(err.message);
+				return (false);
+			}
+			res.json("User already exist");
+	});
 });
 
 app.get('*', function(req, res) {
