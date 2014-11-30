@@ -56,6 +56,7 @@ darwin.controller('mainController',
 		
 		$scope.gotopage = function(page)
 		{
+			console.log(page);
 			$scope.curr_page = page;
 		};
 		
@@ -234,7 +235,6 @@ darwin.controller('mainController',
     	pouchdb.get(id, function(err, otherDoc) {
     		var date = Date.now();
     		otherDoc.comments[date] = {message: $scope.f_user.comment, user: $scope.user_name};
-    		console.log(otherDoc.comments);
 			  pouchdb.put({
 			  	birthdate: otherDoc.birthdate,
 			  	civ: otherDoc.civ,
@@ -251,7 +251,6 @@ darwin.controller('mainController',
 				  			$scope.update_message = 'Erreur dans l\'insertion des données, ' + err.message;
 				  			return (false);
 				  		}
-				  	console.log(response);
 			  	});
 			  });
 			  $scope.user_info.comments = otherDoc.comments;
@@ -345,7 +344,6 @@ darwin.controller('mainController',
   	
   	$scope.sync = function()
   	{
-  		console.log($scope.loggedIn);
   		var db_name = 'student' + $scope.curr_date;
   		PouchDB.replicate(db_name, 'http://62.210.85.76:5984/' + db_name)
   		.on('complete', function(info){
@@ -355,7 +353,6 @@ darwin.controller('mainController',
   					for (err in info.errors)
   						$scope.errors += err + "<br />";
   				}
-  			console.log(info);
   			$scope.$apply();
   		})
   		.on('error', function (err){

@@ -87,6 +87,7 @@
 		        <div classe="row" align="center">
 		          <h1>Profil</h1>
 		        </div>
+		        <a href="#" ng-click="gotopage('list')">Retour à la liste</a>
 		        <div class="row">
 		          <div class="col-sm-4" align="center">
 		            <h2>Informations</h2>
@@ -131,7 +132,7 @@
 			                    </span>
 		                  	</div><!-- /input-group -->
 		                  </form>
-		                  <li ng-repeat="(date, comment) in user_info.comments">
+		                  <li ng-repeat="(date, comment) in user_info.comments | orderBy:'$index':true">
 		             		<p>
 		             			{{ comment.message }}<br />
 		             			<small>par {{ comment.user }}, le {{ date | date:'dd/MM/yyyy HH:mm:ss'}}</small>
