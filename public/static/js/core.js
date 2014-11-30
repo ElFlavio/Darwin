@@ -429,7 +429,7 @@ darwin.controller('mainController',
 
 darwin.run(function ($rootScope) {
 	// todo more than a session
-  if ($rootScope.loggedIn)
+  if (!$rootScope.loggedIn)
   	{
   		$("#login").modal({backdrop: 'static'});
 		}
