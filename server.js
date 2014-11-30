@@ -49,24 +49,40 @@ app.post('/api/users/:date', function(req, res, next) {
 	var csvConverter = new converter(param);
 	var i = 0;
 	var d_ex = {'01': null, "02": null, "03": null, "04": null, "05": null, "06": null, "07": null, "08": null, "09": null, "10": null, "11": null, "12": null};
+	var data = [];
+	
 	csvConverter.on("end_parsed",function(users) {
 		for (user in users)
 			{
 				u = users[user];
-				db.put({
-					civ: u.civility,
-					firstname: u.firstname,
-					lastname: u.lastname,
-					birthdate: u.birthdate,
-					comments: {0: u.comment_tech},
-					cursus: u.learnings_level + ' - ' + u.learnings_expertise,
-					ex: d_ex
-				}, u.id.toString()).then(function(response) {
-					console.log(response);
-				});
+				data[i] = {
+					"_id": u.id.toString(),
+					"civ": u.civility,
+					"firstname": u.firstname,
+					"lastname": u.lastname,
+					"birthdate": u.birthdate,
+					"comments": {},
+					"cursus": u.learnings_level + ' - ' + u.learnings_expertise,
+					"ex": d_ex
+				};
 				i++;
 			}
-			res.json({success: i});
+			var test = [
+  {title : 'Lisa Says'},
+  {title : 'Space Oddity'}
+];
+			console.log(data);
+			console.log(test);
+			db.bulkDocs(data, function(err, response) {
+				console.log(err);
+				if (err)
+				{
+					res.json({error: err.message});
+					return (false);
+				}
+				console.log(response);
+				res.json({success: i});
+			});
 	});
 	fileStream.pipe(csvConverter);
 });

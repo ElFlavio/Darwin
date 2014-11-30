@@ -36,7 +36,7 @@
 	          </ul>
 	        </div><!--/.nav-collapse -->
 	        <div class="pull-right">
-				<button type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-refresh"></span> Sync</button>
+				<button type="button" class="btn btn-default navbar-btn" ng-if="curr_page != 'calendar'" ng-click="sync()"><span class="glyphicon glyphicon-refresh"></span> Sync</button>
 			    <button type="button" class="btn btn-default navbar-btn" ng-if="loggedIn > 1" data-toggle="modal" data-target="#adduser"><span class="glyphicon glyphicon-user"></span> Ajouter utilisateur</button>
 			    <button type="button" class="btn btn-default navbar-btn" ng-click="logout()"><span class="glyphicon glyphicon-log-out"></span> Se déconnecter</button>
 		    </div>
@@ -45,7 +45,7 @@
 		<div ng-if="errors" class="alter alert-danger container"><p>{{ errors }}</p></div>
 		<div ng-if="message" class="alter alert-success container"><p>{{ message }}</p></div>
 		<div ng-switch="curr_page">
-		    <div id ="calendar" class="container" ng-switch-when="calendar">
+		    <div id ="calendar" class="container" ng-show="curr_page == 'calendar'">
 				<div class="starter-template">
 					<h1>Calendrier</h1>
 					<!-- Responsive calendar - START -->
@@ -72,7 +72,7 @@
 				</div>
 		    </div><!-- container -->
 		    
-		    <div id="todo-list" class="row" ng-switch-when="list">
+		    <div id="todo-list" class="container" ng-switch-when="list">
 			    <div class="col-sm-4 col-sm-offset-4">
 			        <div ng-repeat="user in users">
 			            <label>
@@ -90,8 +90,17 @@
 		        <div class="row">
 		          <div class="col-sm-4" align="center">
 		            <h2>Informations</h2>
-		            <img src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" class="img-responsive img-circle center-block"/>
-		            <button type="button" class="btn btn-default">Prendre une photo</button>
+		            <div ng-if="user_img">
+		            	<img src="{{ user_img }}" alt="" />
+		            </div>
+		            <div ng-if="!user_img">
+			            <img ng-show="btn.orig" src="http://illiweb.com/fa/i/avatars/gallery/Animaux/Chaton_a_oeil.gif" id="photo_default" class="img-responsive img-circle center-block" />
+			            <video id="video" width="250" height="150" ng-show="!btn.orig" autoplay class="center-block"></video>
+						<canvas id="canvas" width="250" height="150" class="center-block" style="position: absolute; top: 63px; left: 95px; z-index: -1;">
+						</canvas>
+			            <button type="button" ng-click="snap()" ng-show="!btn.video" class="btn btn-default center-block">Prendre une photo</button>
+			            <button ng-click="take_photo()" ng-show="btn.video" class="btn btn-default center-block">Snap Photo</button>
+		            </div>
 		            <h4>{{ user_info.civ }}.{{ user_info.lastname }} {{ user_info.firstname}}</h4>
 		            <h5>ID : {{ user_info._id}} </h5>
 		            <p>{{ user_info.birthdate }}</p>
@@ -232,6 +241,7 @@
 	<div class="loader">
 		<img src="static/img/loading.gif" alt="loading" />
 	</div>
+	<div class="run_stream"></div>
     <script type="text/javascript" src="static/js/jquery.js"></script>
     <script type="text/javascript" src="static/js/bootstrap.js"> </script>
     <script src="http://code.angularjs.org/1.2.27/angular.js"></script>
@@ -244,7 +254,8 @@
 				onDayClick: function(e) { 
 					$this = $(this);
 					var day = ($this.attr('data-day') < 10) ? "0" + $this.attr('data-day') : $this.attr('data-day');
-					var date = $this.attr('data-year') + "-" + $this.attr('data-month') + "-" + day;
+					var month = ($this.attr('data-month') < 10) ? "0" + $this.attr('data-month') : $this.attr('data-month');
+					var date = $this.attr('data-year') + "-" + month + "-" + day;
 					if ($this.parent().hasClass('active'))
 					{
 						$("#day_view").modal("show");

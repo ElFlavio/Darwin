@@ -10,6 +10,7 @@ darwin.controller('mainController',
     $scope.csv = {};
     $scope.admin = {};
     $scope.new_user = {};
+    $scope.btn = {orig: true, video: false};
     $scope.curr_page = "calendar";
     $scope.csv = {};
     $scope.user_id = 0;
@@ -18,7 +19,10 @@ darwin.controller('mainController',
     $scope.csv_date = 0;
     $scope.curr_date = 0;
     $scope.loggedIn = $window.sessionStorage.token;
-    
+    $scope.videoStream = null;
+    $scope.user_img = null;
+		$scope.video = document.getElementById("video");
+
     // when landing on the page, get all todos and show them
     $scope.new_user.accred = 1;
     $http.get('/api/users')
@@ -83,7 +87,6 @@ darwin.controller('mainController',
 			PouchDB.destroy('student' + date.replace(/-/g,''), function(err, info) {
 				if (err)
 					{
-						console.log(err);
 						$scope.admin.error = err;
 						return (false);
 					}
@@ -134,9 +137,14 @@ darwin.controller('mainController',
 						else
 							{
 								$scope.message = data.success + ' lignes importées';
+								var db = new PouchDB('http://62.210.85.76:5984/student' + date.replace(/-/g,''));
+								db.allDocs(function(err, r){
+									console.log(r);
+								});	
+								PouchDB.replicate("student" + date.replace(/-/g,''), 'http://62.210.85.76:5984/student' + date.replace(/-/g,''), {live: true});
 								var options = {};
 								options[date] = {"number": 1};
-								$('.responsive-calendar').responsiveCalendar('edit',options);
+								$('.responsive-calendar').responsiveCalendar('edit', options);
 								$("#import_csv").modal("hide");
 								$scope.file = null;
 								fd = null;
@@ -148,9 +156,7 @@ darwin.controller('mainController',
 					});
 				}
 			else
-				{
-					$scope.csv.error = 'Invalid file, csv is required';
-				}
+				$scope.csv.error = 'Invalid file, csv is required';
     };
     
     $scope.login = function()
@@ -178,12 +184,12 @@ darwin.controller('mainController',
     };
     
     $scope.logout = function logout() {
-        if ($scope.loggedIn)
-        	{
-            $scope.loggedIn = false;
-            delete $window.sessionStorage.token;
-            $window.location.reload();
-        	}
+	    if ($scope.loggedIn)
+	    	{
+	        $scope.loggedIn = false;
+	        delete $window.sessionStorage.token;
+	        $window.location.reload();
+	    	}
     };
     
     $scope.getUser = function(id) {
@@ -196,7 +202,22 @@ darwin.controller('mainController',
     					$scope.errors = err.message;
     					return (false);
     				}
+  				$scope.message = null;
+  				$scope.errors = null;
     			$scope.user_info = res;
+    			
+    			// get attachement
+    			pouchdb.getAttachment(id, 'image', function(err, att) {
+    				$rootScope.$apply(function() {
+    					if (err)
+    						return (false);
+  						console.log(att);
+    					var url = URL.createObjectURL(att);
+	    				$scope.user_img = url;
+	    				URL.revokeObjectURL(url);
+	    				console.log(url);
+	    			});
+    			});
     			$scope.curr_page = 'user';
     		});
     	});
@@ -215,7 +236,7 @@ darwin.controller('mainController',
 			  	firstname: otherDoc.firstname,
 			  	lastname: otherDoc.lastname,
 			    comments: otherDoc.comments,
-			    ex: otherDoc.ex
+			    ex: otherDoc.ex,
 			  }, id, otherDoc._rev, function(err, response) {
 			  	$rootScope.$apply(function() {
 				  	if (err)
@@ -244,7 +265,7 @@ darwin.controller('mainController',
 			  	firstname: otherDoc.firstname,
 			  	lastname: otherDoc.lastname,
 			    comments: otherDoc.comments,
-			    ex: otherDoc.ex
+			    ex: otherDoc.ex,
 			  }, $scope.user_id, otherDoc._rev, function(err, response) {
 			  	$rootScope.$apply(function() {
 				  	if (err)
@@ -265,7 +286,6 @@ darwin.controller('mainController',
   		var pouchdb = new PouchDB("student" + $scope.curr_date);
   		pouchdb.get($scope.user_id, function(err, otherDoc) {
   			otherDoc.ex[ex] = null;
-  			console.log(otherDoc.ex);
 			  pouchdb.put({
 			    birthdate: otherDoc.birthdate,
 			  	civ: otherDoc.civ,
@@ -273,7 +293,7 @@ darwin.controller('mainController',
 			  	firstname: otherDoc.firstname,
 			  	lastname: otherDoc.lastname,
 			    comments: otherDoc.comments,
-			    ex: otherDoc.ex
+			    ex: otherDoc.ex,
 			  }, $scope.user_id, otherDoc._rev, function(err, response) {
 			  	$rootScope.$apply(function() {
 				  	if (err)
@@ -301,7 +321,7 @@ darwin.controller('mainController',
 			  	firstname: otherDoc.firstname,
 			  	lastname: otherDoc.lastname,
 			    comments: otherDoc.comments,
-			    ex: otherDoc.ex
+			    ex: otherDoc.ex,
 			  }, $scope.user_id, otherDoc._rev, function(err, response) {
 			  	$rootScope.$apply(function() {
 				  	if (err)
@@ -317,9 +337,87 @@ darwin.controller('mainController',
 			});
   	};
   	
+  	$scope.sync = function()
+  	{
+  		console.log($scope.loggedIn);
+  		var db_name = 'student' + $scope.curr_date;
+  		PouchDB.replicate(db_name, 'http://62.210.85.76:5984/' + db_name)
+  		.on('complete', function(info){
+  			$scope.message = "Sync passed " + info.end_time;
+  			if (info.errors.length > 0)
+  				{
+  					for (err in info.errors)
+  						$scope.errors += err + "<br />";
+  				}
+  			console.log(info);
+  			$scope.$apply();
+  		})
+  		.on('error', function (err){
+  			console.error(err);
+  			$scope.errors = err.status + ": " + err.message + " - " + err.statusText;
+  			$scope.$apply();
+  		});
+  	};
+  	
+  	$scope.snap = function()
+  	{
+  		$scope.btn.orig = false;
+  		$scope.btn.video = true;
+  		$scope.video = $window.document.getElementById("video");
+			var videoObj = { "video": true },
+				errBack = function(error) {
+					console.log("Video capture error: ", error.code); 
+				};
+			// Put video listeners into place
+			if(navigator.getUserMedia) { // Standard
+				navigator.getUserMedia(videoObj, function(stream) {
+					$scope.videoStream = stream;
+					$scope.video.src = stream;
+					$scope.video.play();
+				}, errBack);
+			} else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+				navigator.webkitGetUserMedia(videoObj, function(stream){
+					$scope.video.src = window.webkitURL.createObjectURL(stream);
+					$scope.videoStream = stream;
+					$scope.video.play();
+				}, errBack);
+			} else if(navigator.mozGetUserMedia) { // WebKit-prefixed
+				navigator.mozGetUserMedia(videoObj, function(stream){
+					$scope.video.src = window.URL.createObjectURL(stream);
+					$scope.videoStream = stream;
+					$scope.video.play();
+				}, errBack);
+			}
+  	};
+  	
+  	$scope.take_photo = function()
+  	{
+  		var canvas = document.getElementById("canvas");
+  		var context = canvas.getContext("2d");
+			$(canvas).css({zIndex: 2});
+			context.drawImage(video, 0, 0, 200, 150);
+			$scope.video.pause();
+			$scope.videoStream.stop();
+			var img = {};
+			var ex = canvas.toDataURL().split(';');
+			img.type = ex[0].split(":");
+			img.img = ex[1].split(",");
+
+			// save to local
+			var db = new PouchDB("student" + $scope.curr_date);
+			var attachment = new Blob([img.img[1]], {type: 'image/png', encoding: 'utf-8'});
+			var rev = new Date();
+			db.get($scope.user_id, function(err, otherDoc){
+				console.log(otherDoc._rev);
+				db.putAttachment($scope.user_id, 'image', otherDoc._rev, attachment, img.type[1], function(err, res){
+					console.log(err);
+					console.log(res);	
+				});
+			});
+  	};
+  	
   	$scope.get_ex_class = function(ex)
   	{
-  		console.log(ex);
   		if (ex === true)
   			return "alert-success";
 			else if (ex === false)
@@ -331,7 +429,7 @@ darwin.controller('mainController',
 
 darwin.run(function ($rootScope) {
 	// todo more than a session
-  if (!$rootScope.loggedIn)
+  if ($rootScope.loggedIn)
   	{
   		$("#login").modal({backdrop: 'static'});
 		}
@@ -349,6 +447,10 @@ darwin.directive('fileInput', ['$parse', function($parse){
 		}
 	};
 }]);
+
+darwin.service('save_data', function(){
+	
+});
 
 darwin.factory('pouchdb', function() {
   PouchDB.enableAllDbs = true;
