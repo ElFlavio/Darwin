@@ -2,8 +2,8 @@
 var darwin = angular.module('darwin', []);
 
 darwin.controller('mainController',
-	['$scope', '$http', '$rootScope', '$location', '$window', '$rootScope',
-	function($scope, $http, $rootScope, $location, $window, $rootScope)
+	['$scope', '$http', '$rootScope', '$location', '$window', '$timeout',
+	function($scope, $http, $rootScope, $location, $window, $timeout)
 	{
     $scope.formData = {};
     $scope.f_user = {};
@@ -22,6 +22,7 @@ darwin.controller('mainController',
     $scope.videoStream = null;
     $scope.user_img = null;
 		$scope.video = document.getElementById("video");
+		$scope.user_name = 'guest';
 
     // when landing on the page, get all todos and show them
     $scope.new_user.accred = 1;
@@ -90,6 +91,7 @@ darwin.controller('mainController',
 						$scope.admin.error = err;
 						return (false);
 					}
+					PouchDB.replicate("student" + date.replace(/-/g,''), 'http://62.210.85.76:5984/student' + date.replace(/-/g,''), {live: true});
 					console.log(info);
 			});
 			$('.responsive-calendar').responsiveCalendar('clear',[date]);
@@ -131,24 +133,26 @@ darwin.controller('mainController',
 						headers: {'content-Type': undefined}
 					})
 					.success(function(data){
-						console.log(data);
 						if (data.error)
 							$scope.csv.error = data.error;
-						else
+						else if (data.success > 0)
 							{
-								$scope.message = data.success + ' lignes importées';
-								var db = new PouchDB('http://62.210.85.76:5984/student' + date.replace(/-/g,''));
-								db.allDocs(function(err, r){
-									console.log(r);
-								});	
-								PouchDB.replicate("student" + date.replace(/-/g,''), 'http://62.210.85.76:5984/student' + date.replace(/-/g,''), {live: true});
-								var options = {};
-								options[date] = {"number": 1};
-								$('.responsive-calendar').responsiveCalendar('edit', options);
-								$("#import_csv").modal("hide");
+								var local = new PouchDB("student" + date.replace(/-/g,''));
+								local.replicate.from('http://62.210.85.76:5984/student' + date.replace(/-/g,''))
+						    .on("complete", function(i){
+						    	$scope.$apply(function(){
+							    	$scope.message = i.docs_written + ' lignes importées';
+							    	var options = {};
+										options[date] = {"number": 1};
+										$('.responsive-calendar').responsiveCalendar('edit', options);
+										$("#import_csv").modal("hide");
+									});
+						    });
 								$scope.file = null;
 								fd = null;
 							}
+						else
+							$scope.csv.error = "0 ligne importé";
 					})
 					.error(function(data){
 						$scope.csv.error = 'Erreur lors du traitement';
@@ -169,6 +173,7 @@ darwin.controller('mainController',
 	    			if (d > 0)
 	    				{
 	    					$("#login").modal('hide');
+	    					$scope.user_name = $scope.login_form.login;
 	    					$window.sessionStorage.token = d;
 	    					$scope.loggedIn = $window.sessionStorage.token;
 	    				}
@@ -228,7 +233,8 @@ darwin.controller('mainController',
     	var pouchdb = new PouchDB("student" + $scope.curr_date);
     	pouchdb.get(id, function(err, otherDoc) {
     		var date = Date.now();
-    		otherDoc.comments[date] = $scope.f_user.comment;
+    		otherDoc.comments[date] = {message: $scope.f_user.comment, user: $scope.user_name};
+    		console.log(otherDoc.comments);
 			  pouchdb.put({
 			  	birthdate: otherDoc.birthdate,
 			  	civ: otherDoc.civ,
@@ -447,10 +453,6 @@ darwin.directive('fileInput', ['$parse', function($parse){
 		}
 	};
 }]);
-
-darwin.service('save_data', function(){
-	
-});
 
 darwin.factory('pouchdb', function() {
   PouchDB.enableAllDbs = true;

@@ -133,8 +133,8 @@
 		                  </form>
 		                  <li ng-repeat="(date, comment) in user_info.comments">
 		             		<p>
-		             			{{ comment }}<br />
-		             			<small>{{ date | date:'yyyy-MM-dd HH:mm:ss'}}</small>
+		             			{{ comment.message }}<br />
+		             			<small>par {{ comment.user }}, le {{ date | date:'dd/MM/yyyy HH:mm:ss'}}</small>
 		         			</p>
 			             </li>
 		                </div> <!-- col-sm-6 -->
@@ -212,7 +212,6 @@
 							<p><input id="date_csv" type="hidden" name="csv" value="0" /></p>
 							<p>Aucun CSV détecté pour cette journée, veuillez en importer un.</p>
 							<button ng-click="csv_upload($event)" class="btn btn-default">Envoyer <span class="glyphicon glyphicon-import" aria-hidden="true"></span></button>
-							<span class="glyphicon glyphicon-saved" aria-hidden="true"></span>
 						</form>
 					</div>
 				</div><!-- /.modal-content -->

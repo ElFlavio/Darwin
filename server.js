@@ -67,12 +67,6 @@ app.post('/api/users/:date', function(req, res, next) {
 				};
 				i++;
 			}
-			var test = [
-  {title : 'Lisa Says'},
-  {title : 'Space Oddity'}
-];
-			console.log(data);
-			console.log(test);
 			db.bulkDocs(data, function(err, response) {
 				console.log(err);
 				if (err)
